@@ -1,0 +1,319 @@
+<?php
+
+# MantisScheduledTickets - a MantisBT (http://www.mantisbt.org) plugin
+
+# MantisScheduledTickets is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# MantisScheduledTickets is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Mantis Scheduled Tickets
+ *
+ * @package MantisScheduledTickets
+ * @filesource
+ * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @link http://www.mantis-scheduled-tickets.net
+ */
+
+$s_plugin_MantisScheduledTickets_ = '';
+
+$s_plugin_MantisScheduledTickets_manage_menu_link = 'Manage MantisScheduledTickets';
+
+# configuration-related strings
+$s_plugin_MantisScheduledTickets_manage_configuration_link = 'Manage Configuration';
+$s_plugin_MantisScheduledTickets_title_configuration = 'MantisScheduledTickets Configuration';
+$s_plugin_MantisScheduledTickets_config_wget_command_available = 'wget command available';
+$s_plugin_MantisScheduledTickets_config_crontab_command_available = 'crontab command available';
+$s_plugin_MantisScheduledTickets_config_manage_threshold = 'Manage threshold';
+$s_plugin_MantisScheduledTickets_config_email_reports_to = 'Email reports to';
+$s_plugin_MantisScheduledTickets_config_send_email_on_successful_auto_report = 'Send email on successful auto-report';
+$s_plugin_MantisScheduledTickets_config_auto_reporter_username = 'Auto reporter username';
+$s_plugin_MantisScheduledTickets_config_auto_reporter_password = 'Auto reporter password';
+$s_plugin_MantisScheduledTickets_config_save = 'Save configuration';
+$s_plugin_MantisScheduledTickets_config_ok = 'OK';
+$s_plugin_MantisScheduledTickets_config_not_ok = 'NOT OK';
+
+# frequency-related strings
+$s_plugin_MantisScheduledTickets_manage_frequency_link = 'Manage Frequencies';
+$s_plugin_MantisScheduledTickets_create_new_frequency_link = 'Create New Frequency';
+$s_plugin_MantisScheduledTickets_regenerate_crontab_link = 'Regenerate crontab file';
+
+$s_plugin_MantisScheduledTickets_title_frequencies = 'Frequencies';
+$s_plugin_MantisScheduledTickets_title_add_frequency = 'Add Frequency';
+$s_plugin_MantisScheduledTickets_title_edit_frequency = 'Edit Frequency';
+
+$s_plugin_MantisScheduledTickets_frequency = 'Frequency';
+$s_plugin_MantisScheduledTickets_frequency_name = 'Name';
+$s_plugin_MantisScheduledTickets_frequency_enabled = 'Enabled';
+$s_plugin_MantisScheduledTickets_frequency_minute = 'Minute';
+$s_plugin_MantisScheduledTickets_frequency_hour = 'Hour';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month = 'Day of month';
+$s_plugin_MantisScheduledTickets_frequency_month = 'Month';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week = 'Day of week';
+$s_plugin_MantisScheduledTickets_frequency_template_count = 'Template count';
+$s_plugin_MantisScheduledTickets_frequency_bug_count = 'Issue count';
+$s_plugin_MantisScheduledTickets_frequency_crontab_status = 'Crontab status';
+
+$s_plugin_MantisScheduledTickets_frequency_add = 'Add frequency';
+$s_plugin_MantisScheduledTickets_frequency_update = 'Update frequency';
+$s_plugin_MantisScheduledTickets_frequency_delete_sure_msg = 'Are you sure you want to delete this frequency?';
+$s_plugin_MantisScheduledTickets_frequency_delete = 'Delete frequency';
+$s_plugin_MantisScheduledTickets_frequency_dangerous_sure_msg = 'This frequency may lead to quite a few issues being created. Are you sure you want to proceed?';
+$s_plugin_MantisScheduledTickets_frequency_dangerous_proceed = 'Proceed';
+
+$s_plugin_MantisScheduledTickets_frequency_history = 'Frequency History';
+$s_plugin_MantisScheduledTickets_frequency_added = 'New frequency';
+$s_plugin_MantisScheduledTickets_frequency_enabled = 'Enabled';
+$s_plugin_MantisScheduledTickets_frequency_disabled = 'Disabled';
+$s_plugin_MantisScheduledTickets_frequency_deleted = 'Deleted';
+
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_all = 'All';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_choose = 'Choose';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_0 = 'Sunday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_1 = 'Monday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_2 = 'Tuesday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_3 = 'Wednesday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_4 = 'Thursday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_5 = 'Friday';
+$s_plugin_MantisScheduledTickets_frequency_day_of_week_6 = 'Saturday';
+
+$s_plugin_MantisScheduledTickets_frequency_month_all = 'All';
+$s_plugin_MantisScheduledTickets_frequency_month_choose = 'Choose';
+$s_plugin_MantisScheduledTickets_frequency_month_1 = 'January';
+$s_plugin_MantisScheduledTickets_frequency_month_2 = 'February';
+$s_plugin_MantisScheduledTickets_frequency_month_3 = 'March';
+$s_plugin_MantisScheduledTickets_frequency_month_4 = 'April';
+$s_plugin_MantisScheduledTickets_frequency_month_5 = 'May';
+$s_plugin_MantisScheduledTickets_frequency_month_6 = 'June';
+$s_plugin_MantisScheduledTickets_frequency_month_7 = 'July';
+$s_plugin_MantisScheduledTickets_frequency_month_8 = 'August';
+$s_plugin_MantisScheduledTickets_frequency_month_9 = 'September';
+$s_plugin_MantisScheduledTickets_frequency_month_10 = 'October';
+$s_plugin_MantisScheduledTickets_frequency_month_11 = 'November';
+$s_plugin_MantisScheduledTickets_frequency_month_12 = 'December';
+
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_all = 'All';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_choose = 'Choose';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_1 = '1st';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_2 = '2nd';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_3 = '3rd';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_4 = '4th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_5 = '5th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_6 = '6th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_7 = '7th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_8 = '8th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_9 = '9th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_10 = '10th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_11 = '11th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_12 = '12th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_13 = '13th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_14 = '14th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_15 = '15th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_16 = '16th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_17 = '17th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_18 = '18th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_19 = '19th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_20 = '20th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_21 = '21st';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_22 = '22nd';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_23 = '23rd';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_24 = '24th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_25 = '25th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_26 = '26th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_27 = '27th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_28 = '28th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_29 = '29th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_30 = '30th';
+$s_plugin_MantisScheduledTickets_frequency_day_of_month_31 = '31st';
+
+$s_plugin_MantisScheduledTickets_frequency_hour_all = 'All';
+$s_plugin_MantisScheduledTickets_frequency_hour_choose = 'Choose';
+$s_plugin_MantisScheduledTickets_frequency_hour_0 = '12 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_1 = '01 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_2 = '02 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_3 = '03 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_4 = '04 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_5 = '05 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_6 = '06 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_7 = '07 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_8 = '08 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_9 = '09 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_10 = '10 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_11 = '11 AM';
+$s_plugin_MantisScheduledTickets_frequency_hour_12 = '12 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_13 = '01 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_14 = '02 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_15 = '03 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_16 = '04 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_17 = '05 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_18 = '06 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_19 = '07 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_20 = '08 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_21 = '09 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_22 = '10 PM';
+$s_plugin_MantisScheduledTickets_frequency_hour_23 = '11 PM';
+
+$s_plugin_MantisScheduledTickets_frequency_minute_all = 'All';
+$s_plugin_MantisScheduledTickets_frequency_minute_choose = 'Choose';
+$s_plugin_MantisScheduledTickets_frequency_minute_0 = '00';
+$s_plugin_MantisScheduledTickets_frequency_minute_1 = '01';
+$s_plugin_MantisScheduledTickets_frequency_minute_2 = '02';
+$s_plugin_MantisScheduledTickets_frequency_minute_3 = '03';
+$s_plugin_MantisScheduledTickets_frequency_minute_4 = '04';
+$s_plugin_MantisScheduledTickets_frequency_minute_5 = '05';
+$s_plugin_MantisScheduledTickets_frequency_minute_6 = '06';
+$s_plugin_MantisScheduledTickets_frequency_minute_7 = '07';
+$s_plugin_MantisScheduledTickets_frequency_minute_8 = '08';
+$s_plugin_MantisScheduledTickets_frequency_minute_9 = '09';
+$s_plugin_MantisScheduledTickets_frequency_minute_10 = '10';
+$s_plugin_MantisScheduledTickets_frequency_minute_11 = '11';
+$s_plugin_MantisScheduledTickets_frequency_minute_12 = '12';
+$s_plugin_MantisScheduledTickets_frequency_minute_13 = '13';
+$s_plugin_MantisScheduledTickets_frequency_minute_14 = '14';
+$s_plugin_MantisScheduledTickets_frequency_minute_15 = '15';
+$s_plugin_MantisScheduledTickets_frequency_minute_16 = '16';
+$s_plugin_MantisScheduledTickets_frequency_minute_17 = '17';
+$s_plugin_MantisScheduledTickets_frequency_minute_18 = '18';
+$s_plugin_MantisScheduledTickets_frequency_minute_19 = '19';
+$s_plugin_MantisScheduledTickets_frequency_minute_20 = '20';
+$s_plugin_MantisScheduledTickets_frequency_minute_21 = '21';
+$s_plugin_MantisScheduledTickets_frequency_minute_22 = '22';
+$s_plugin_MantisScheduledTickets_frequency_minute_23 = '23';
+$s_plugin_MantisScheduledTickets_frequency_minute_24 = '24';
+$s_plugin_MantisScheduledTickets_frequency_minute_25 = '25';
+$s_plugin_MantisScheduledTickets_frequency_minute_26 = '26';
+$s_plugin_MantisScheduledTickets_frequency_minute_27 = '27';
+$s_plugin_MantisScheduledTickets_frequency_minute_28 = '28';
+$s_plugin_MantisScheduledTickets_frequency_minute_29 = '29';
+$s_plugin_MantisScheduledTickets_frequency_minute_30 = '30';
+$s_plugin_MantisScheduledTickets_frequency_minute_31 = '31';
+$s_plugin_MantisScheduledTickets_frequency_minute_32 = '32';
+$s_plugin_MantisScheduledTickets_frequency_minute_33 = '33';
+$s_plugin_MantisScheduledTickets_frequency_minute_34 = '34';
+$s_plugin_MantisScheduledTickets_frequency_minute_35 = '35';
+$s_plugin_MantisScheduledTickets_frequency_minute_36 = '36';
+$s_plugin_MantisScheduledTickets_frequency_minute_37 = '37';
+$s_plugin_MantisScheduledTickets_frequency_minute_38 = '38';
+$s_plugin_MantisScheduledTickets_frequency_minute_39 = '39';
+$s_plugin_MantisScheduledTickets_frequency_minute_40 = '40';
+$s_plugin_MantisScheduledTickets_frequency_minute_41 = '41';
+$s_plugin_MantisScheduledTickets_frequency_minute_42 = '42';
+$s_plugin_MantisScheduledTickets_frequency_minute_43 = '43';
+$s_plugin_MantisScheduledTickets_frequency_minute_44 = '44';
+$s_plugin_MantisScheduledTickets_frequency_minute_45 = '45';
+$s_plugin_MantisScheduledTickets_frequency_minute_46 = '46';
+$s_plugin_MantisScheduledTickets_frequency_minute_47 = '47';
+$s_plugin_MantisScheduledTickets_frequency_minute_48 = '48';
+$s_plugin_MantisScheduledTickets_frequency_minute_49 = '49';
+$s_plugin_MantisScheduledTickets_frequency_minute_50 = '50';
+$s_plugin_MantisScheduledTickets_frequency_minute_51 = '51';
+$s_plugin_MantisScheduledTickets_frequency_minute_52 = '52';
+$s_plugin_MantisScheduledTickets_frequency_minute_53 = '53';
+$s_plugin_MantisScheduledTickets_frequency_minute_54 = '54';
+$s_plugin_MantisScheduledTickets_frequency_minute_55 = '55';
+$s_plugin_MantisScheduledTickets_frequency_minute_56 = '56';
+$s_plugin_MantisScheduledTickets_frequency_minute_57 = '57';
+$s_plugin_MantisScheduledTickets_frequency_minute_58 = '58';
+$s_plugin_MantisScheduledTickets_frequency_minute_59 = '59';
+
+$s_plugin_MantisScheduledTickets_error_frequency_name_not_unique = 'Frequency name already exists. Please choose a different name.';
+$s_plugin_MantisScheduledTickets_error_frequency_not_unique = 'This frequency already exists.';
+$s_plugin_MantisScheduledTickets_error_invalid_crontab_file = 'Invalid crontab file';
+$s_plugin_MantisScheduledTickets_error_frequency_not_found = 'Frequency not found';
+
+$s_plugin_MantisScheduledTickets_error_frequency_no_minute_specified = 'Please choose at least one value for the minute field.';
+$s_plugin_MantisScheduledTickets_error_frequency_no_hour_specified = 'Please choose at least one value for the hour field.';
+$s_plugin_MantisScheduledTickets_error_frequency_no_day_of_month_specified = 'Please choose at least one value for the day of month field.';
+$s_plugin_MantisScheduledTickets_error_frequency_no_month_specified = 'Please choose at least one value for the month field.';
+$s_plugin_MantisScheduledTickets_error_frequency_no_day_of_week_specified = 'Please choose at least one value for the day of week field.';
+
+$s_plugin_MantisScheduledTickets_legend_frequency_template_unassociated = 'not associated';
+$s_plugin_MantisScheduledTickets_legend_frequency_template_associated = 'associated';
+$s_plugin_MantisScheduledTickets_legend_frequency_bug_unassociated = 'unassociated';
+$s_plugin_MantisScheduledTickets_legend_frequency_bug_associated = 'associated';
+$s_plugin_MantisScheduledTickets_legend_frequency_crontab_not_ok = 'missing';
+$s_plugin_MantisScheduledTickets_legend_frequency_crontab_disabled = 'disabled';
+$s_plugin_MantisScheduledTickets_legend_frequency_crontab_ok = 'ok';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_template_unassociated = 'frequency is not associated with a template';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_template_associated = 'frequency is associated with one or more templates';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_bug_unassociated = 'no issues have been created (yet) based on this frequency';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_bug_associated = 'one or more issues are linked to this frequency';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_crontab_not_ok = 'crontab file does not contain an entry for this frequency, perhaps because someone manually edited the crontab file and/or database records';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_crontab_disabled = 'crontab file does not contain an entry for this frequency, because the frequency is not enabled';
+$s_plugin_MantisScheduledTickets_legend_title_frequency_crontab_ok = 'crontab file contains an entry for this frequency';
+
+# template-related strings
+$s_plugin_MantisScheduledTickets_manage_template_link = 'Manage Templates';
+$s_plugin_MantisScheduledTickets_create_new_template_link = 'Create New Template';
+
+$s_plugin_MantisScheduledTickets_title_templates = 'Templates';
+$s_plugin_MantisScheduledTickets_title_add_template = 'Add Template';
+$s_plugin_MantisScheduledTickets_title_edit_template = 'Edit Template';
+$s_plugin_MantisScheduledTickets_title_edit_template_category = 'Edit Template Project/Category';
+
+$s_plugin_MantisScheduledTickets_template_summary = 'Summary';
+$s_plugin_MantisScheduledTickets_template_description = 'Description';
+$s_plugin_MantisScheduledTickets_template_enabled = 'Enabled';
+$s_plugin_MantisScheduledTickets_template_category_count = 'Project/category count';
+$s_plugin_MantisScheduledTickets_template_status = 'Template status';
+$s_plugin_MantisScheduledTickets_template_bug_count = 'Issue count';
+
+$s_plugin_MantisScheduledTickets_template_add = 'Add template';
+$s_plugin_MantisScheduledTickets_template_update = 'Update template';
+$s_plugin_MantisScheduledTickets_template_delete_sure_msg = 'Are you sure you want to delete this template?';
+$s_plugin_MantisScheduledTickets_template_delete = 'Delete template';
+$s_plugin_MantisScheduledTickets_template_category_edit = 'Edit';
+$s_plugin_MantisScheduledTickets_template_category_delete = 'Delete';
+$s_plugin_MantisScheduledTickets_template_category_delete_sure_msg = 'Are you sure you want to delete this project/category?';
+
+$s_plugin_MantisScheduledTickets_template_history = 'Template History';
+$s_plugin_MantisScheduledTickets_template_added = 'New template';
+$s_plugin_MantisScheduledTickets_template_enabled = 'Enabled';
+$s_plugin_MantisScheduledTickets_template_disabled = 'Disabled';
+$s_plugin_MantisScheduledTickets_template_deleted = 'Deleted';
+$s_plugin_MantisScheduledTickets_template_category_added = 'Project/category added';
+$s_plugin_MantisScheduledTickets_template_category_changed = 'Project/category changed';
+$s_plugin_MantisScheduledTickets_template_category_deleted = 'Project/category deleted';
+$s_plugin_MantisScheduledTickets_template_category_changed = 'Project/category changed';
+$s_plugin_MantisScheduledTickets_template_category_changed_info = 'Category: %s; %s => %s';
+
+$s_plugin_MantisScheduledTickets_not_assigned = '[not assigned]';
+
+$s_plugin_MantisScheduledTickets_error_template_summary_not_unique = 'A template with this summary already exists. Please enter a different summary.';
+$s_plugin_MantisScheduledTickets_error_template_category_frequency_user_not_unique = 'This template is already associated with this category, frequency and user. Please choose a different combination';
+$s_plugin_MantisScheduledTickets_error_template_not_found = 'Template not found';
+
+$s_plugin_MantisScheduledTickets_legend_template_category_unassociated = 'unassociated';
+$s_plugin_MantisScheduledTickets_legend_template_category_associated = 'associated';
+$s_plugin_MantisScheduledTickets_legend_template_status_not_ok = 'not ok';
+$s_plugin_MantisScheduledTickets_legend_template_status_ok = 'ok';
+$s_plugin_MantisScheduledTickets_legend_template_bug_unassociated = 'unassociated';
+$s_plugin_MantisScheduledTickets_legend_template_bug_associated = 'associated';
+$s_plugin_MantisScheduledTickets_legend_title_template_category_unassociated = 'template is not associated with a category';
+$s_plugin_MantisScheduledTickets_legend_title_template_category_associated = 'template is associated with one or more categories/frequencies/users';
+$s_plugin_MantisScheduledTickets_legend_title_template_status_not_ok = 'template is associated with categories/users that have since been deleted';
+$s_plugin_MantisScheduledTickets_legend_title_template_status_ok = 'template is associated with valid categories/users';
+$s_plugin_MantisScheduledTickets_legend_title_template_bug_unassociated = 'no issues have been created (yet) based on this template';
+$s_plugin_MantisScheduledTickets_legend_title_template_bug_associated = 'one or more issues are linked to this template';
+
+# ticket-related strings
+$s_plugin_MantisScheduledTickets_error_host_access_denied = 'Access denied (host)';
+$s_plugin_MantisScheduledTickets_error_user_access_denied = 'Access denied (user)';
+
+# email-related
+$s_plugin_MantisScheduledTickets_email_subject_validation = '[bug_report_auto] Validation report';
+$s_plugin_MantisScheduledTickets_email_subject_auto_report_error = '[bug_report_auto] Error report';
+$s_plugin_MantisScheduledTickets_email_subject_auto_report_success = '[bug_report_auto] Success report';
+$s_plugin_MantisScheduledTickets_email_invalid_templates = 'Invalid template(s):';
+$s_plugin_MantisScheduledTickets_email_tickets_successfully_created = 'The following tickets have been created successfully:';
+$s_plugin_MantisScheduledTickets_email_validation_report = 'Validation report';
+$s_plugin_MantisScheduledTickets_crontab_file = 'crontab file';

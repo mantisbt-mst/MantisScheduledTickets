@@ -1,0 +1,85 @@
+/*
+MantisScheduledTickets - a MantisBT (http://www.mantisbt.org) plugin
+
+MantisScheduledTickets is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+MantisScheduledTickets is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * Mantis Scheduled Tickets
+ *
+ * @package MantisScheduledTickets
+ * @filesource
+ * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @link http://www.mantis-scheduled-tickets.net
+ */
+
+.config_ok {
+  background-color: #d2f5b0;
+}
+
+.config_not_ok {
+  background-color: #fcbdbd;
+}
+
+.frequency_template_unassociated {
+  background-color: #fcbdbd;
+}
+
+.frequency_template_associated {
+  background-color: #d2f5b0;
+}
+
+.frequency_bug_unassociated {
+  background-color: #fff494;
+}
+
+.frequency_bug_associated {
+  background-color: #d2f5b0;
+}
+
+.frequency_crontab_not_ok {
+  background-color: #fcbdbd;
+}
+
+.frequency_crontab_disabled {
+  background-color: #fff494;
+}
+
+.frequency_crontab_ok {
+  background-color: #d2f5b0;
+}
+
+.template_category_unassociated {
+  background-color: #fcbdbd;
+}
+
+.template_category_associated {
+  background-color: #d2f5b0;
+}
+
+.template_status_not_ok {
+  background-color: #fcbdbd;
+}
+
+.template_status_ok {
+  background-color: #d2f5b0;
+}
+
+.template_bug_unassociated {
+  background-color: #fff494
+}
+
+.template_bug_associated {
+  background-color: #d2f5b0;
+}
