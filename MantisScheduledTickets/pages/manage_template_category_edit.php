@@ -30,6 +30,7 @@
 
     $f_id = gpc_get_int( 'id' );
     $f_template_id = gpc_get_int( 'template_id' );
+    $f_project_id = gpc_get_int( 'project_id' );
     $f_category_id = gpc_get_int( 'category_id' );
     $f_frequency_id = gpc_get_int( 'frequency_id' );
     $f_user_id = gpc_get_int( 'user_id', 0 );
@@ -43,7 +44,7 @@
     $t_new_record->user_id = $f_user_id;
 
     template_category_update( $f_id, $f_template_id, $f_category_id, $f_frequency_id, $f_user_id );
-    template_category_log_changes( $f_template_id, $f_category_id, $t_old_record, $t_new_record );
+    template_category_log_changes( $f_template_id, $f_project_id, $f_category_id, $t_old_record, $t_new_record );
 
     form_security_purge( 'manage_template_category_edit' );
 

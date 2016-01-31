@@ -48,6 +48,7 @@
 
         <input type="hidden" name="id" value="<?php echo $t_id; ?>" />
         <input type="hidden" name="template_id" value="<?php echo $t_template_id; ?>" />
+        <input type="hidden" name="project_id" value="<?php echo $t_category['project_id']; ?>">
         <input type="hidden" name="category_id" value="<?php echo $t_category['category_id']; ?>">
         <input type="hidden" name="old_frequency_id" value="<?php echo $t_category['frequency_id']; ?>" />
         <input type="hidden" name="old_user_id" value="<?php echo $t_category['user_id']; ?>" />
@@ -64,7 +65,7 @@
                     <?php echo lang_get( 'category' ); ?>
                 </td>
                 <td width="80%">
-                    <input <?php echo helper_get_tab_index(); ?> type="text" name="category" size="50" value="<?php echo string_display( category_full_name( $t_category['category_id'] , true, 0 ) ); ?>" disabled />
+                    <input <?php echo helper_get_tab_index(); ?> type="text" name="category" size="50" value="<?php echo "[{$t_category['project_name']}] {$t_category['category_name']}"; ?>" disabled />
                 </td>
             </tr>
 

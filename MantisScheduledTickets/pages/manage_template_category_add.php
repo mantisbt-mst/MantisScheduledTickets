@@ -36,7 +36,7 @@
     list( $t_project_id, $t_category_id ) = explode( ',', $f_project_category_id, 2 );
 
     $t_id = template_category_add( $f_template_id, $t_project_id, $t_category_id, $f_frequency_id, $f_user_id );
-    template_category_log_event_special( $f_template_id,  $f_category_id, TEMPLATE_CATEGORY_ADDED );
+    template_category_log_event_special( $f_template_id, $t_project_id, $t_category_id, TEMPLATE_CATEGORY_ADDED );
 
     form_security_purge( 'manage_template_category_add' );
 

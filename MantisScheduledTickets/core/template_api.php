@@ -301,7 +301,7 @@ function template_get_categories( $p_id, $p_category_id = null ) {
 
     $query = "SELECT
                 TC.id,
-                C.project_id,
+                TC.project_id,
                 P.name AS project_name,
                 TC.category_id,
                 C.name AS category_name,
@@ -603,16 +603,20 @@ function template_category_delete( $p_id ) {
 function template_category_get( $p_id ) {
     $t_template_category_table = plugin_table( 'template_category' );
     $t_category_table = db_get_table( 'mantis_category_table' );
+    $t_project_table = db_get_table( 'mantis_project_table' );
 
     $query = "SELECT
-                C.project_id,
+                TC.project_id,
+                P.name AS project_name,
                 C.name AS category_name,
-                C.id AS category_id,
+                TC.category_id,
                 TC.frequency_id,
                 TC.user_id
             FROM $t_template_category_table AS TC
-            JOIN $t_category_table AS C
+            LEFT JOIN $t_category_table AS C
                 ON C.id = TC.category_id
+            LEFT JOIN $t_project_table AS P
+                ON P.id = TC.project_id
             WHERE TC.id = " . db_param() . ";";
     $result = db_query_bound( $query, array( $p_id ) );
 
@@ -770,21 +774,23 @@ function template_log_changes( $p_id, $p_old_record, $p_new_record ) {
  * Log template/category event (add, delete)
  *
  * @param int $p_id Template record id
+ * @param int $p_project_id Project id
  * @param int $p_category_id Category id
  * @param int $p_event_type Event type
  * @return void
  */
-function template_category_log_event_special( $p_id, $p_category_id, $p_event_type ) {
+function template_category_log_event_special( $p_id, $p_project_id, $p_category_id, $p_event_type ) {
     $t_template_category_history_table = plugin_table( 'tmplt_cat_hist' );
     $t_user_id = auth_get_current_user_id();
 
-    $t_project_category = category_full_name( $p_category_id, true, 0 );
+    $t_project_name = project_get_name( $p_project_id );
+    $t_category_name = category_full_name( $p_category_id, false );
 
     $query = "INSERT $t_template_category_history_table
                 (user_id, template_id, date_modified, type, project_category )
             VALUES
                 (" . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ');';
-    db_query_bound( $query, array( $t_user_id, $p_id, db_now(), $p_event_type, $t_project_category ) );
+    db_query_bound( $query, array( $t_user_id, $p_id, db_now(), $p_event_type, "[$t_project_name] $t_category_name" ) );
 }
 
 /**
@@ -793,41 +799,44 @@ function template_category_log_event_special( $p_id, $p_category_id, $p_event_ty
  * Record the actual changes made (old/new values)
  *
  * @param int $p_id Template record id
+ * @param int $p_project_id Project id
  * @param int $p_category_id Category id
  * @param string $p_field_name Field name
  * @param mixed $p_old_value Old field value
  * @param mixed $p_new_value New field value
  * @return void
  */
-function template_category_log_event( $p_id, $p_category_id, $p_field_name, $p_old_value, $p_new_value ) {
+function template_category_log_event( $p_id, $p_project_id, $p_category_id, $p_field_name, $p_old_value, $p_new_value ) {
     $t_template_category_history_table = plugin_table( 'tmplt_cat_hist' );
     $t_user_id = auth_get_current_user_id();
 
-    $t_project_category = category_full_name( $p_category_id, true, 0 );
+    $t_project_name = project_get_name( $p_project_id );
+    $t_category_name = category_full_name( $p_category_id, false );
 
     $query = "INSERT $t_template_category_history_table
                 (user_id, template_id, date_modified, type, project_category, field_name, old_value, new_value)
             VALUES
                 (" . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' .  db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ');';
-    db_query_bound( $query, array( $t_user_id, $p_id, db_now(), TEMPLATE_CATEGORY_CHANGED, $t_project_category, $p_field_name , $p_old_value, $p_new_value ) );
+    db_query_bound( $query, array( $t_user_id, $p_id, db_now(), TEMPLATE_CATEGORY_CHANGED, "[$t_project_name] $t_category_name", $p_field_name , $p_old_value, $p_new_value ) );
 }
 
 /**
  * Determine differences between two given template/category records and log them
  *
  * @param int $p_id Template record id
+ * @param int $p_project_id Project id
  * @param int $p_category_id Category record id
  * @param mixed $p_old_record Template/category object representing the old record
  * @param mixed $p_new_record Template/category object representing the new record
  * @return void
  */
-function template_category_log_changes( $p_id, $p_category_id, $p_old_record, $p_new_record ) {
+function template_category_log_changes( $p_id, $p_project_id, $p_category_id, $p_old_record, $p_new_record ) {
     if ( $p_old_record->frequency_id != $p_new_record->frequency_id ) {
-        template_category_log_event( $p_id, $p_category_id, 'frequency', $p_old_record->frequency_id, $p_new_record->frequency_id );
+        template_category_log_event( $p_id, $p_project_id, $p_category_id, 'frequency', $p_old_record->frequency_id, $p_new_record->frequency_id );
     }
 
     if ( $p_old_record->user_id != $p_new_record->user_id ) {
-        template_category_log_event( $p_id, $p_category_id, 'assigned_to', $p_old_record->user_id, $p_new_record->user_id );
+        template_category_log_event( $p_id, $p_project_id, $p_category_id, 'assigned_to', $p_old_record->user_id, $p_new_record->user_id );
     }
 }
 

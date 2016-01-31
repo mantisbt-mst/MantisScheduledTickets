@@ -161,6 +161,7 @@
                         <form name="manage_template_category_edit" method="post" action="<?php echo plugin_page( 'manage_template_category_edit_page' ); ?>">
                             <input type="hidden" name="id" value="<?php echo $t_id; ?>">
                             <input type="hidden" name="template_id" value="<?php echo $t_template_id; ?>">
+                            <input type="hidden" name="project_id" value="<?php echo $t_category['project_id']; ?>">
                             <input type="hidden" name="category_id" value="<?php echo $t_category['category_id']; ?>">
                             <input type="submit" class="button-small" value="<?php echo plugin_lang_get( 'template_category_edit' ); ?>"<?php echo $t_disable_edit; ?>>
                         </form>
@@ -170,6 +171,7 @@
                             ?>
                             <input type="hidden" name="id" value="<?php echo $t_id; ?>">
                             <input type="hidden" name="template_id" value="<?php echo $t_template_id; ?>">
+                            <input type="hidden" name="project_id" value="<?php echo $t_category['project_id']; ?>">
                             <input type="hidden" name="category_id" value="<?php echo $t_category['category_id']; ?>">
                             <input type="submit" class="button-small" value="<?php echo plugin_lang_get( 'template_category_delete' ); ?>">
                         </form>

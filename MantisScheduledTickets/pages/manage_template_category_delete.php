@@ -28,6 +28,7 @@
 
     $f_id = gpc_get_int( 'id' );
     $f_template_id = gpc_get_int( 'template_id' );
+    $f_project_id = gpc_get_int( 'project_id' );
     $f_category_id = gpc_get_int( 'category_id' );
 
     form_security_validate( 'manage_template_category_delete' );
@@ -35,7 +36,7 @@
     helper_ensure_confirmed( plugin_lang_get( 'template_category_delete_sure_msg' ), plugin_lang_get( 'template_category_delete' ) );
 
     template_category_delete( $f_id );
-    template_category_log_event_special( $f_template_id, $f_category_id, TEMPLATE_CATEGORY_DELETED );
+    template_category_log_event_special( $f_template_id, $f_project_id, $f_category_id, TEMPLATE_CATEGORY_DELETED );
 
     form_security_purge( 'manage_template_category_delete' );
 

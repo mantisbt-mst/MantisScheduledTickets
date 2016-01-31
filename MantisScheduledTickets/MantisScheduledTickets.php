@@ -36,7 +36,7 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
     function register() {
         $this->name = 'Mantis Scheduled Tickets';
         $this->description = 'Create tickets automatically, based on definable frequencies';
-        $this->version = '0.3.0';
+        $this->version = '0.3.1';
         $this->page = 'manage_configuration_edit_page';
 
         $this->requires = array(
