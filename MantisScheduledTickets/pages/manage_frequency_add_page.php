@@ -25,103 +25,110 @@
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
-    $g_MantisScheduledTickets_context = true;
 
     $t_page_title = plugin_lang_get( 'title_add_frequency' );
-
-    html_page_top( $t_page_title );
-    print_manage_menu();
-    mst_core_print_scheduled_tickets_menu();
-
     $t_action_page = plugin_page( 'manage_frequency_add' );
+
+    layout_page_header( $t_page_title );
+    layout_page_begin();
+    print_manage_menu();
+    mst_core_print_scheduled_tickets_menu( MST_MANAGE_FREQUENCY_PAGE );
 
 ?>
 
-<div align="center">
-    <form name="add_frequency" id="add_frequency" method="post" action="<?php echo $t_action_page; ?>">
-        <?php
-            echo form_security_field( 'add_frequency' );
-        ?>
+<div class="col-md-12 col xs-12">
+    <div class="space-10"></div>
+    <div class="form-container">
+        <form name="add_frequency" id="add_frequency" class="mst_form" method="post" action="<?php echo $t_action_page; ?>">
+            <?php
+                echo form_security_field( 'manage_frequency_add' );
+            ?>
 
-        <table class="width75" cellspacing="1">
-            <tr>
-                <td class="form-title" colspan="5">
-                    <?php echo $t_page_title; ?>
-                </td>
-            </tr>
+            <div class="widget-box widget-color-blue2">
+                <div class="widget-header widget-header-small">
+                    <h4>
+                        <i class="ace-icon fa fa-calendar-o"></i>
+                        <?php echo $t_page_title; ?>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main no-padding">
+                        <table class="table table-bordered table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_name' ); ?>
+                                    </td>
+                                    <td colspan="4">
+                                        <input <?php echo helper_get_tab_index() ?> type="text" name="name" id="name" size="60" maxlength="128" />
+                                    </td>
+                                </tr>
 
-            <tr <?php echo helper_alternate_class() ?>>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_name' ); ?>
-                </td>
-                <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="text" name="name" id="name" size="60" maxlength="128" />
-                </td>
-            </tr>
+                                <tr>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_enabled' ); ?>
+                                    </td>
+                                    <td colspan="4">
+                                        <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" id="enabled" checked="checked" />
+                                    </td>
+                                </tr>
 
-            <tr <?php echo helper_alternate_class() ?>>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_enabled' ); ?>
-                </td>
-                <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" id="enabled" checked="checked" />
-                </td>
-            </tr>
+                                <tr>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_day_of_week' ); ?>
+                                    </td>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_month' ); ?>
+                                    </td>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_day_of_month' ); ?>
+                                    </td>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_hour' ); ?>
+                                    </td>
+                                    <td class="category">
+                                        <span class="required">*</span><?php echo plugin_lang_get( 'frequency_minute' ); ?>
+                                    </td>
+                                </tr>
 
-            <tr <?php echo helper_alternate_class(); ?>>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_day_of_week' ); ?>
-                </td>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_month' ); ?>
-                </td>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_day_of_month' ); ?>
-                </td>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_hour' ); ?>
-                </td>
-                <td class="category" width="20%">
-                    <span class="required">*</span><?php echo plugin_lang_get( 'frequency_minute' ); ?>
-                </td>
-            </tr>
+                                <tr>
+                                    <!-- day of week -->
+                                    <td>
+                                        <?php mst_helper_render_day_of_week_options(); ?>
+                                    </td>
 
-            <tr <?php echo helper_alternate_class(); ?>>
-                <!-- day of week -->
-                <td width="20%">
-                    <?php mst_helper_render_day_of_week_options(); ?>
-                </td>
+                                    <!-- month -->
+                                    <td>
+                                        <?php mst_helper_render_month_options(); ?>
+                                    </td>
 
-                <!-- month -->
-                <td width="20%">
-                    <?php mst_helper_render_month_options(); ?>
-                </td>
+                                    <!-- day of month -->
+                                    <td>
+                                        <?php mst_helper_render_day_of_month_options(); ?>
+                                    </td>
 
-                <!-- day of month -->
-                <td width="20%">
-                    <?php mst_helper_render_day_of_month_options(); ?>
-                </td>
+                                    <!-- hour -->
+                                    <td>
+                                        <?php mst_helper_render_hour_options(); ?>
+                                    </td>
 
-                <!-- hour -->
-                <td width="20%">
-                    <?php mst_helper_render_hour_options(); ?>
-                </td>
-
-                <!-- minute -->
-                <td width="20%">
-                    <?php mst_helper_render_minute_options(); ?>
-                </td>
-            </tr>
-
-            <!-- buttons -->
-            <tr>
-                <td colspan="5">
-                    <input <?php echo helper_get_tab_index() ?> type="submit" class="button" value="<?php echo plugin_lang_get( 'frequency_add' ); ?>" />
-                </td>
-            </tr>
-        </table>
-    </form>
+                                    <!-- minute -->
+                                    <td>
+                                        <?php mst_helper_render_minute_options(); ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="widget-toolbox padding-8 clearfix">
+                        <span class="required pull-right"> * <?php echo lang_get( 'required' ); ?></span>
+                        <input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo plugin_lang_get( 'frequency_add' ); ?>" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <?php
-    html_page_bottom();
+    layout_page_end();

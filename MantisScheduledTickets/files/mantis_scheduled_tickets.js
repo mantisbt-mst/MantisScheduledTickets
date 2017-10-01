@@ -28,7 +28,7 @@ var buttonAddLabel = 'Add';
 var buttonUpdateLabel = 'Update';
 
 function enable_disable( id, disabled ) {
-    $('#' + id).prop('disabled', disabled);
+    document.getElementById(id).disabled = disabled;
 }
 
 function enable_disable_diff( id1, id2 ) {
@@ -49,6 +49,12 @@ function enable_disable_diff( id1, id2 ) {
 function focus_on_first_element() {
     if (window.location.href.indexOf('MantisScheduledTickets') != -1 ) {
         $('.mst_form').find('input[type=text],textarea,select').filter(':visible:first').focus();
+    }
+}
+
+function highlight_manage_MST_menu() {
+    if (window.location.href.indexOf('page=MantisScheduledTickets') != -1) {
+        $('.mst_manage_link').parent().addClass('active');
     }
 }
 
@@ -146,7 +152,7 @@ function bind_events() {
         enable_disable('minute_select', false);
     });
 
-    $('#command').bind('click', function() {
+    $('#command').change(function() {
         enable_disable_diff('command', 'diff_flag');
     });
 
@@ -166,4 +172,5 @@ function bind_events() {
 $(function() {
     focus_on_first_element();
     bind_events();
+    highlight_manage_MST_menu();
 });

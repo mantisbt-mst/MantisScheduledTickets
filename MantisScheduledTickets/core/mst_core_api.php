@@ -41,22 +41,29 @@ define( 'MST_STATUS_CODE_INVALID_USER', 4 );
  * @return void
  */
 function mst_core_print_scheduled_tickets_menu( $p_page = null ) {
-    echo '<div align="center">';
+    echo '<div class="space-10"></div>' . "\n";
+    echo '<div class="center">' . "\n";
+    echo '<div class="btn-toolbar inline">' . "\n";
+    echo '<div class="btn-group">' . "\n";
 
-    print_bracket_link(
-        ( MST_CONFIGURATION_PAGE === $p_page ) ? '' : plugin_page( 'manage_configuration_edit_page' ),
-        plugin_lang_get( 'manage_configuration_link' )
-    );
-    print_bracket_link(
-        ( MST_MANAGE_FREQUENCY_PAGE === $p_page ) ? '' : plugin_page( 'manage_frequency_page' ),
-        plugin_lang_get( 'manage_frequency_link' )
-    );
-    print_bracket_link(
-        ( MST_MANAGE_TEMPLATE_PAGE === $p_page ) ? '' : plugin_page( 'manage_template_page' ),
-        plugin_lang_get( 'manage_template_link' )
-    );
+    $t_active = ( MST_CONFIGURATION_PAGE === $p_page ) ? 'active' : '';
+    echo '<a class="btn btn-sm btn-white btn-primary ' . $t_active . '" href="'. plugin_page( 'manage_configuration_edit_page' ) .'">' . "\n";
+    echo plugin_lang_get( 'manage_configuration_link' );
+    echo '</a>' . "\n";
 
-    echo '</div>';
+    $t_active = ( MST_MANAGE_FREQUENCY_PAGE === $p_page ) ? 'active' : '';
+    echo '<a class="btn btn-sm btn-white btn-primary ' . $t_active . '" href="'. plugin_page( 'manage_frequency_page' ) .'">' . "\n";
+    echo plugin_lang_get( 'manage_frequency_link' );
+    echo '</a>' . "\n";
+
+    $t_active = ( MST_MANAGE_TEMPLATE_PAGE === $p_page ) ? 'active' : '';
+    echo '<a class="btn btn-sm btn-white btn-primary ' . $t_active . '" href="'. plugin_page( 'manage_template_page' ) .'">' . "\n";
+    echo plugin_lang_get( 'manage_template_link' );
+    echo '</a>' . "\n";
+
+    echo '</div>' . "\n";
+    echo '</div>' . "\n";
+    echo '</div>' . "\n";
 }
 
 /**

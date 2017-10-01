@@ -40,7 +40,7 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
         $this->page = 'manage_configuration_edit_page';
 
         $this->requires = array(
-                'MantisCore' => '1.3.0'
+                'MantisCore' => '2.0.0'
             );
 
         $this->author = 'MantisScheduledTickets Team';
@@ -240,11 +240,11 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
      * @return void
      */
     function config() {
-        global $g_administrator_email;
+        global $g_webmaster_email;
 
         return array(
             'manage_threshold' => ADMINISTRATOR,
-            'email_reports_to' => $g_administrator_email,
+            'email_reports_to' => $g_webmaster_email,
             'auto_reporter_username' => 'auto_reporter',
             'crontab_base_url' => 'http://127.0.0.1',
             'send_email_on_success' => true,
@@ -299,21 +299,13 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
      * @return void
      */
     function menu_manage() {
-        global $g_MantisScheduledTickets_context;
-
         if( access_has_global_level( plugin_config_get( 'manage_threshold' ) ) ) {
             $t_configuration_page = plugin_page( 'manage_configuration_edit_page' );
             $t_configuration_link = plugin_lang_get( 'manage_menu_link' );
 
-            if( $g_MantisScheduledTickets_context ) {
-                return array(
-                    $t_configuration_link
-                );
-            } else {
-                return array(
-                    '<a href="' . string_html_specialchars( $t_configuration_page ) . '">' . $t_configuration_link . '</a>'
-                );
-            }
+            return array(
+                '<a class="mst_manage_link" href="' . string_html_specialchars( $t_configuration_page ) . '">' . $t_configuration_link . '</a>'
+            );
         }
     }
 }

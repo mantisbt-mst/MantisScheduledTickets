@@ -26,7 +26,7 @@
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'edit_template' );
+    form_security_validate( 'manage_template_edit' );
 
     $f_template_id = gpc_get_int( 'template_id' );
 
@@ -71,21 +71,11 @@
         template_delete_all_command_arguments( $f_template_id );
     }
 
-    form_security_purge( 'edit_template' );
+    form_security_purge( 'manage_template_edit' );
 
     $t_redirect_url = plugin_page( 'manage_template_page', true );
 
-    html_page_top( null, $t_redirect_url );
-
-?>
-
-<br />
-<div align="center">
-<?php
-	echo lang_get( 'operation_successful' ) . '<br />';
-	print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-
-<?php
-	html_page_bottom();
+    layout_page_header( null, $t_redirect_url );
+    layout_page_begin();
+    html_operation_successful( $t_redirect_url );
+    layout_page_end();

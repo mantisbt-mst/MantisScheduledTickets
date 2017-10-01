@@ -116,7 +116,8 @@ function cron_validate_crontab_file( $p_interactive = true ) {
         foreach( $t_crontab_file as $t_job ) {
             if( 0 == $t_job['matched'] ) {
                 if( $p_interactive ) {
-                    plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
+                    error_parameters( plugin_lang_get( 'error_invalid_crontab_file' ), plugin_lang_get ( 'title' ) );
+                    trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
                 }
 
                 return false;
@@ -128,7 +129,8 @@ function cron_validate_crontab_file( $p_interactive = true ) {
         foreach( $t_frequencies as $t_frequency ) {
             if( 0 == $t_frequency['matched'] ) {
                 if( $p_interactive ) {
-                    plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
+                    error_parameters( plugin_lang_get( 'error_invalid_crontab_file' ), plugin_lang_get ( 'title' ) );
+                    trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
                 }
 
                 return false;

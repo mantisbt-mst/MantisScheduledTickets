@@ -39,10 +39,16 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
         return true;
     }
 
-    html_page_top();
+    layout_page_header();
+    layout_page_begin();
 
-    echo '<br /><div align="center">';
-    echo $p_message;
+	echo '<div class="col-md-12 col-xs-12">';
+	echo '<div class="space-10"></div>';
+	echo '<div class="alert alert-warning center">';
+	echo '<p class="bigger-110">';
+	echo "\n" . $p_message . "\n";
+	echo '</p>';
+	echo '<div class="space-10"></div>';
 
     echo '<form method="post" action="' . string_attribute( form_action_self() ) . '">';
     # CSRF protection not required here - user needs to confirm action
@@ -50,18 +56,19 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
     print_hidden_inputs( $_POST );
     print_hidden_inputs( $_GET );
 
-    echo '<input type="hidden" name="_confirmed" value="1" /><br /><br />';
+	echo '<input type="hidden" name="_confirmed" value="1" />' , "\n";
 
     if( is_array( $p_button_labels ) ) {
         foreach( $p_button_labels as $t_button_label ) {
-            echo '<input type="submit" class="button" name="action" value="' . $t_button_label . '" />&nbsp;';
+            echo '<input type="submit" class="btn btn-primary btn-white btn-round" name="action" value="' . $t_button_label . '" />&nbsp;';
         }
     }
 
-    echo '</form>';
+	echo "\n</form>\n";
+	echo '<div class="space-10"></div>';
+	echo '</div></div>';
 
-    echo '</div>';
-    html_page_bottom();
+    layout_page_end();
     exit;
 }
 

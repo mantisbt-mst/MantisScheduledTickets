@@ -31,12 +31,14 @@
     $t_auto_reporter_user_id = user_get_id_by_name( $t_auto_reporter_username );
 
     if ( $_SERVER["REMOTE_ADDR"] != $_SERVER["SERVER_ADDR"] ) {
-        plugin_error( plugin_lang_get( 'error_host_access_denied' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_host_access_denied' ), plugin_lang_get ( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         exit;
     }
 
     if ( false == auth_attempt_script_login( $t_auto_reporter_username ) ) {
-        plugin_error( plugin_lang_get( 'error_user_access_denied' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_user_access_denied' ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         exit;
     }
 

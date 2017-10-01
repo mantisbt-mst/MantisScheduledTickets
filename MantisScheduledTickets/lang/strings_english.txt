@@ -26,6 +26,7 @@
 
 $s_plugin_MantisScheduledTickets_ = '';
 
+$s_plugin_MantisScheduledTickets_title = 'MantisScheduledTickets';
 $s_plugin_MantisScheduledTickets_manage_menu_link = 'Manage MantisScheduledTickets';
 
 # configuration-related strings

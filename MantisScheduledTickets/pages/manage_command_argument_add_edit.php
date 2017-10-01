@@ -35,7 +35,8 @@
     $f_argument_value = gpc_get_string( 'argument_value' );
 
     if( false == command_argument_is_valid( $f_argument_name, $f_command_argument_id ) ) {
-        plugin_error( plugin_lang_get( 'error_command_argument' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_command_argument' ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     $t_old_command_arguments = command_arguments_format(
@@ -66,17 +67,7 @@
 
     $t_redirect_url = plugin_page( 'manage_template_category_edit_page', true ) . '&id=' . $f_template_category_id;
 
-    html_page_top( null, $t_redirect_url );
-
-?>
-
-<br />
-<div align="center">
-<?php
-    echo lang_get( 'operation_successful' ).'<br />';
-    print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-
-<?php
-    html_page_bottom();
+    layout_page_header( null, $t_redirect_url );
+    layout_page_begin();
+    html_operation_successful( $t_redirect_url );
+    layout_page_end();

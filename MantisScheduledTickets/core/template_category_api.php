@@ -168,7 +168,8 @@ function template_category_get_row( $p_template_category_id ) {
     $t_template_categories = template_category_get_all( $t_filter );
 
     if( false == is_array( $t_template_categories ) ) {
-        plugin_error( plugin_lang_get( 'error_template_category_not_found' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_template_category_not_found' ), plugin_lang_get( 'title ' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     return $t_template_categories[0];

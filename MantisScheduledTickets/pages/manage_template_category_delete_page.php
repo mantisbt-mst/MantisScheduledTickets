@@ -29,28 +29,18 @@
     $f_template_category_id = gpc_get_int( 'id' );
     $f_template_id = gpc_get_int( 'template_id' );
 
-    form_security_validate( 'delete_template_category' );
+    form_security_validate( 'manage_template_category_delete' );
 
     helper_ensure_confirmed( plugin_lang_get( 'template_category_delete_sure_msg' ), lang_get( 'delete_link' ) );
 
     template_category_delete( $f_template_category_id );
     template_category_log_event_special( $f_template_id, $f_template_category_id, MST_TEMPLATE_CATEGORY_DELETED );
 
-    form_security_purge( 'delete_template_category' );
+    form_security_purge( 'manage_template_category_delete' );
 
     $t_redirect_url = plugin_page( 'manage_template_edit_page', true ) . "&id=$f_template_id";
 
-    html_page_top( null, $t_redirect_url );
-
-?>
-
-<br />
-<div align="center">
-<?php
-    echo lang_get( 'operation_successful' ).'<br />';
-    print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-
-<?php
-    html_page_bottom();
+    layout_page_header( null, $t_redirect_url );
+    layout_page_begin();
+    html_operation_successful( $t_redirect_url );
+    layout_page_end();

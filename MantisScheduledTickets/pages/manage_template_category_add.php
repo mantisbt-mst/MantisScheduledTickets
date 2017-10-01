@@ -26,7 +26,7 @@
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'add_template_category' );
+    form_security_validate( 'manage_template_category_add' );
 
     $f_template_id = gpc_get_int( 'template_id' );
     $f_project_category_id = gpc_get( 'category_id' );
@@ -44,21 +44,11 @@
     );
     template_category_log_event_special( $f_template_id, $t_template_category_id, MST_TEMPLATE_CATEGORY_ADDED );
 
-    form_security_purge( 'add_template_category' );
+    form_security_purge( 'manage_template_category_add' );
 
     $t_redirect_url = plugin_page( 'manage_template_edit_page', true ) . '&id=' . $f_template_id;
 
-    html_page_top( null, $t_redirect_url );
-
-?>
-
-<br />
-<div align="center">
-<?php
-	echo lang_get( 'operation_successful' ) . '<br />';
-	print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-
-<?php
-	html_page_bottom();
+    layout_page_header( null, $t_redirect_url );
+    layout_page_begin();
+    html_operation_successful( $t_redirect_url );
+    layout_page_end();

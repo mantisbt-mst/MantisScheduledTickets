@@ -203,7 +203,8 @@ function template_get_row( $p_template_id ) {
     $t_templates = template_get_all( $t_filter );
 
     if( false == is_array( $t_templates[0] ) ) {
-        plugin_error( plugin_lang_get( 'error_template_not_found' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_template_not_found' ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     return $t_templates[0];
@@ -245,20 +246,14 @@ function template_summary_is_unique( $p_summary, $p_template_id = null ) {
 /**
  * Ensure that the given template is unique
  *
- * @todo plugin error reporting appears to be broken in Mantis 1.2.19; revisit in the future
- *
  * @param string $p_summary Template summary
  * @param int $p_template_id Template record id
  * @return void
  */
 function template_ensure_unique( $p_summary, $p_template_id = null ) {
     if( false == template_summary_is_unique( $p_summary, $p_template_id ) ) {
-        /* @todo
-        error_parameters( plugin_lang_get( 'error_template_summary_not_unique' ) );
+        error_parameters( plugin_lang_get( 'error_template_summary_not_unique' ), plugin_lang_get( 'title' ) );
         trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
-        */
-
-        plugin_error( plugin_lang_get( 'error_template_summary_not_unique' ), ERROR );
     }
 }
 

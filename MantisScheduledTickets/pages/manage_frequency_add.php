@@ -24,7 +24,7 @@
  * @link http://www.mantis-scheduled-tickets.net
  */
 
-    form_security_validate( 'add_frequency' );
+    form_security_validate( 'manage_frequency_add' );
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
@@ -45,7 +45,8 @@
         $t_minute = '*';
     } else {
         if( null === $f_minute_select ) {
-            plugin_error( plugin_lang_get( 'error_frequency_no_minute_specified' ), ERROR );
+            error_parameters( plugin_lang_get( 'error_frequency_no_minute_specified' ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
 
         $t_minute = join( ',', $f_minute_select );
@@ -55,7 +56,8 @@
         $t_hour = '*';
     } else {
         if( null === $f_hour_select ) {
-            plugin_error( plugin_lang_get( 'error_frequency_no_hour_specified' ), ERROR );
+            error_parameters( plugin_lang_get( 'error_frequency_no_hour_specified' ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
 
         $t_hour = join( ',', $f_hour_select );
@@ -65,7 +67,8 @@
         $t_day_of_month = '*';
     } else {
         if( null === $f_day_of_month_select ) {
-            plugin_error( plugin_lang_get( 'error_frequency_no_day_of_month_specified' ), ERROR );
+            error_parameters( plugin_lang_get( 'error_frequency_no_day_of_month_specified' ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
 
         $t_day_of_month = join( ',', $f_day_of_month_select );
@@ -75,7 +78,8 @@
         $t_month = '*';
     } else {
         if( null === $f_month_select ) {
-            plugin_error( plugin_lang_get( 'error_frequency_no_month_specified' ), ERROR );
+            error_parameters( plugin_lang_get( 'error_frequency_no_month_specified' ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
 
         $t_month = join( ',', $f_month_select );
@@ -85,7 +89,8 @@
         $t_day_of_week = '*';
     } else {
         if( null === $f_day_of_week_select ) {
-            plugin_error( plugin_lang_get( 'error_frequency_no_day_of_week_specified' ), ERROR );
+            error_parameters( plugin_lang_get( 'error_frequency_no_day_of_week_specified' ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
 
         $t_day_of_week = join( ',', $f_day_of_week_select );
@@ -105,21 +110,11 @@
     cron_regenerate_crontab_file();
     cron_validate_crontab_file();
 
-    form_security_purge( 'add_frequency' );
+    form_security_purge( 'manage_frequency_add' );
 
     $t_redirect_url = plugin_page( 'manage_frequency_page', true );
 
-    html_page_top( null, $t_redirect_url );
-
-?>
-
-<br />
-<div align="center">
-<?php
-	echo lang_get( 'operation_successful' ) . '<br />';
-	print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
-?>
-</div>
-
-<?php
-	html_page_bottom();
+    layout_page_header( null, $t_redirect_url );
+    layout_page_begin();
+    html_operation_successful( $t_redirect_url );
+    layout_page_end();

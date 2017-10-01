@@ -231,7 +231,8 @@ function frequency_get_row( $p_frequency_id ) {
     $t_frequencies = frequency_get_all( $t_filter );
 
     if( false == is_array( $t_frequencies[0] ) ) {
-        plugin_error( plugin_lang_get( 'error_frequency_not_found' ), ERROR );
+        error_parameters( plugin_lang_get( 'error_frequency_not_found' ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     return $t_frequencies[0];
@@ -327,8 +328,6 @@ function frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_
 /**
  * Ensure that the given frequency is unique
  *
- * @todo plugin error reporting appears to be broken in Mantis 1.2.19; revisit in the future
- *
  * @param string $p_name Frequency name
  * @param string $p_minute Minute component
  * @param string $p_hour Hour component
@@ -340,21 +339,13 @@ function frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_
  */
 function frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id = null ) {
     if( false == frequency_name_is_unique( $p_name, $p_frequency_id ) ) {
-        /* @todo
-        error_parameters( plugin_lang_get( 'error_frequency_name_not_unique' ) );
+        error_parameters( plugin_lang_get( 'error_frequency_name_not_unique' ), plugin_lang_get( 'title' ) );
         trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
-        */
-
-        plugin_error( plugin_lang_get( 'error_frequency_name_not_unique' ), ERROR );
     }
 
     if( false == frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id ) ) {
-        /* @todo
-        error_parameters( plugin_lang_get( 'error_frequency_not_unique' ) );
+        error_parameters( plugin_lang_get( 'error_frequency_not_unique' ), plugin_lang_get( 'title' ) );
         trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
-        */
-
-        plugin_error( plugin_lang_get( 'error_frequency_not_unique' ), ERROR );
     }
 }
 
@@ -376,14 +367,16 @@ function frequency_ensure_valid_field_values( $p_value, $p_min_value, $p_max_val
     }
 
     if( '' == trim( $p_value ) ) {
-        plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+        error_parameters( plugin_lang_get( $p_error_string ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     # is there anything in the given string that's NOT a space, a digit or a comma?
     preg_match( '/[^\s\d,]/', $p_value, $t_matches );
 
     if( $t_matches ) {
-        plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+        error_parameters( plugin_lang_get( $p_error_string ), plugin_lang_get( 'title' ) );
+        trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
     }
 
     # validate that each value is within the given range
@@ -391,7 +384,8 @@ function frequency_ensure_valid_field_values( $p_value, $p_min_value, $p_max_val
 
     foreach( $t_values as $t_value ) {
         if( ( $p_min_value > (int)trim( $t_value ) ) || ( $p_max_value < (int)trim( $t_value ) ) ) {
-            plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+            error_parameters( plugin_lang_get( $p_error_string ), plugin_lang_get( 'title' ) );
+            trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         }
     }
 }
