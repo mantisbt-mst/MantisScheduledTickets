@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -33,11 +33,22 @@ $s_plugin_MantisScheduledTickets_manage_configuration_link = 'Manage Configurati
 $s_plugin_MantisScheduledTickets_title_configuration = 'MantisScheduledTickets Configuration';
 $s_plugin_MantisScheduledTickets_config_wget_command_available = 'wget command available';
 $s_plugin_MantisScheduledTickets_config_crontab_command_available = 'crontab command available';
+$s_plugin_MantisScheduledTickets_config_diff_command_available = 'diff command available';
 $s_plugin_MantisScheduledTickets_config_manage_threshold = 'Manage threshold';
 $s_plugin_MantisScheduledTickets_config_email_reports_to = 'Email reports to';
-$s_plugin_MantisScheduledTickets_config_send_email_on_successful_auto_report = 'Send email on successful auto-report';
+$s_plugin_MantisScheduledTickets_config_send_email_on_success = 'Send email on successful auto-report';
 $s_plugin_MantisScheduledTickets_config_auto_reporter_username = 'Auto reporter username';
-$s_plugin_MantisScheduledTickets_config_auto_reporter_password = 'Auto reporter password';
+$s_plugin_MantisScheduledTickets_config_crontab_base_url = 'Crontab base URL';
+$s_plugin_MantisScheduledTickets_config_enable_commands = 'Enable commands';
+$s_plugin_MantisScheduledTickets_config_commands_enabled = 'Commands enabled';
+$s_plugin_MantisScheduledTickets_config_commands_disabled = 'Commands disabled';
+$s_plugin_MantisScheduledTickets_config_check_for_updates = 'Check for updates';
+$s_plugin_MantisScheduledTickets_config_installed_version = 'Installed version';
+$s_plugin_MantisScheduledTickets_config_latest_version = 'Latest version';
+$s_plugin_MantisScheduledTickets_config_option_enabled = 'Yes';
+$s_plugin_MantisScheduledTickets_config_option_disabled = 'No';
+$s_plugin_MantisScheduledTickets_config_unable_to_check_for_updates = 'Check for updates failed. Please check your Internet connection and retry.';
+$s_plugin_MantisScheduledTickets_config_update_info_unknown = 'MantisScheduledTickets has not been tested with this version of Mantis';
 $s_plugin_MantisScheduledTickets_config_save = 'Save configuration';
 $s_plugin_MantisScheduledTickets_config_ok = 'OK';
 $s_plugin_MantisScheduledTickets_config_not_ok = 'NOT OK';
@@ -227,14 +238,21 @@ $s_plugin_MantisScheduledTickets_frequency_minute_59 = '59';
 
 $s_plugin_MantisScheduledTickets_error_frequency_name_not_unique = 'Frequency name already exists. Please choose a different name.';
 $s_plugin_MantisScheduledTickets_error_frequency_not_unique = 'This frequency already exists.';
-$s_plugin_MantisScheduledTickets_error_invalid_crontab_file = 'Invalid crontab file';
-$s_plugin_MantisScheduledTickets_error_frequency_not_found = 'Frequency not found';
+$s_plugin_MantisScheduledTickets_error_invalid_crontab_file = 'Invalid crontab file.';
+$s_plugin_MantisScheduledTickets_error_frequency_not_found = 'Frequency not found.';
+$s_plugin_MantisScheduledTickets_error_frequency_cannot_be_deleted = 'Frequency is associated with templates or issues and cannot be deleted.';
 
 $s_plugin_MantisScheduledTickets_error_frequency_no_minute_specified = 'Please choose at least one value for the minute field.';
 $s_plugin_MantisScheduledTickets_error_frequency_no_hour_specified = 'Please choose at least one value for the hour field.';
 $s_plugin_MantisScheduledTickets_error_frequency_no_day_of_month_specified = 'Please choose at least one value for the day of month field.';
 $s_plugin_MantisScheduledTickets_error_frequency_no_month_specified = 'Please choose at least one value for the month field.';
 $s_plugin_MantisScheduledTickets_error_frequency_no_day_of_week_specified = 'Please choose at least one value for the day of week field.';
+
+$s_plugin_MantisScheduledTickets_error_frequency_invalid_minute_value = 'Invalid minute value specified. Valid values are 0-59 (comma-separated if more than one) or "*".';
+$s_plugin_MantisScheduledTickets_error_frequency_invalid_hour_value = 'Invalid hour value specified. Valid values are 0-23 (comma-separated if more than one) or "*".';
+$s_plugin_MantisScheduledTickets_error_frequency_invalid_day_of_month_value = 'Invalid day of month value specified. Valid values are 1-31 (comma-separated if more than one) or "*".';
+$s_plugin_MantisScheduledTickets_error_frequency_invalid_month_value = 'Invalid month value specified. Valid values are 1-12 (comma-separated if more than one) or "*".';
+$s_plugin_MantisScheduledTickets_error_frequency_invalid_day_of_week_value = 'Invalid day of week value specified. Valid values are 0-6 (comma-separated if more than one) or "*".';
 
 $s_plugin_MantisScheduledTickets_legend_frequency_template_unassociated = 'not associated';
 $s_plugin_MantisScheduledTickets_legend_frequency_template_associated = 'associated';
@@ -266,14 +284,26 @@ $s_plugin_MantisScheduledTickets_template_enabled = 'Enabled';
 $s_plugin_MantisScheduledTickets_template_category_count = 'Project/category count';
 $s_plugin_MantisScheduledTickets_template_status = 'Template status';
 $s_plugin_MantisScheduledTickets_template_bug_count = 'Issue count';
+$s_plugin_MantisScheduledTickets_template_command = 'Command';
+$s_plugin_MantisScheduledTickets_template_diff_flag = 'Perform diff';
+$s_plugin_MantisScheduledTickets_template_category_id = 'ID';
+$s_plugin_MantisScheduledTickets_template_command_arguments = 'Command arguments';
+$s_plugin_MantisScheduledTickets_template_command_argument_name = 'Argument name';
+$s_plugin_MantisScheduledTickets_template_command_argument_value = 'Argument value';
+$s_plugin_MantisScheduledTickets_template_command_argument_add = 'Add command argument';
+$s_plugin_MantisScheduledTickets_template_command_argument_button_add = 'Add';
+$s_plugin_MantisScheduledTickets_template_command_argument_button_update = 'Update';
+$s_plugin_MantisScheduledTickets_template_command_argument_button_reset = 'Reset';
+$s_plugin_MantisScheduledTickets_template_command_change_sure_msg = 'The command has changed and, therefore, the arguments may no longer be applicable. Would you like to keep the arguments or delete all command arguments associated with this template?';
+$s_plugin_MantisScheduledTickets_template_command_arguments_keep = 'Keep arguments';
+$s_plugin_MantisScheduledTickets_template_command_arguments_delete = 'Delete arguments';
 
 $s_plugin_MantisScheduledTickets_template_add = 'Add template';
 $s_plugin_MantisScheduledTickets_template_update = 'Update template';
 $s_plugin_MantisScheduledTickets_template_delete_sure_msg = 'Are you sure you want to delete this template?';
 $s_plugin_MantisScheduledTickets_template_delete = 'Delete template';
-$s_plugin_MantisScheduledTickets_template_category_edit = 'Edit';
-$s_plugin_MantisScheduledTickets_template_category_delete = 'Delete';
 $s_plugin_MantisScheduledTickets_template_category_delete_sure_msg = 'Are you sure you want to delete this project/category?';
+$s_plugin_MantisScheduledTickets_command_argument_delete_sure_msg = 'Are you sure you want to delete this command argument?';
 
 $s_plugin_MantisScheduledTickets_template_history = 'Template History';
 $s_plugin_MantisScheduledTickets_template_added = 'New template';
@@ -283,14 +313,18 @@ $s_plugin_MantisScheduledTickets_template_deleted = 'Deleted';
 $s_plugin_MantisScheduledTickets_template_category_added = 'Project/category added';
 $s_plugin_MantisScheduledTickets_template_category_changed = 'Project/category changed';
 $s_plugin_MantisScheduledTickets_template_category_deleted = 'Project/category deleted';
-$s_plugin_MantisScheduledTickets_template_category_changed = 'Project/category changed';
-$s_plugin_MantisScheduledTickets_template_category_changed_info = 'Category: %s; %s => %s';
+$s_plugin_MantisScheduledTickets_template_category_added_info = 'ID: %d';
+$s_plugin_MantisScheduledTickets_template_category_deleted_info = 'ID: %d';
+$s_plugin_MantisScheduledTickets_template_category_changed_info = 'ID: %d; %s => %s';
 
 $s_plugin_MantisScheduledTickets_not_assigned = '[not assigned]';
 
 $s_plugin_MantisScheduledTickets_error_template_summary_not_unique = 'A template with this summary already exists. Please enter a different summary.';
 $s_plugin_MantisScheduledTickets_error_template_category_frequency_user_not_unique = 'This template is already associated with this category, frequency and user. Please choose a different combination';
 $s_plugin_MantisScheduledTickets_error_template_not_found = 'Template not found';
+$s_plugin_MantisScheduledTickets_error_template_cannot_be_deleted = 'Template is associated with issues and cannot be deleted.';
+$s_plugin_MantisScheduledTickets_error_template_category_not_found = 'Template category not found';
+$s_plugin_MantisScheduledTickets_error_command_argument = 'Invalid command argument (name has to be unique for a given template/category, only contain alphanumeric characters and/or dashes, and not be "--diff-left-side" or "--output-file"). Please go back and correct your entry';
 
 $s_plugin_MantisScheduledTickets_legend_template_category_unassociated = 'unassociated';
 $s_plugin_MantisScheduledTickets_legend_template_category_associated = 'associated';
@@ -305,15 +339,37 @@ $s_plugin_MantisScheduledTickets_legend_title_template_status_ok = 'template is 
 $s_plugin_MantisScheduledTickets_legend_title_template_bug_unassociated = 'no issues have been created (yet) based on this template';
 $s_plugin_MantisScheduledTickets_legend_title_template_bug_associated = 'one or more issues are linked to this template';
 
+# output-file-related
+$s_plugin_MantisScheduledTickets_output_file_invalid_actions = 'Output file errors detected';
+$s_plugin_MantisScheduledTickets_output_file_invalid_user = 'Action "%s", invalid user "%s"';
+$s_plugin_MantisScheduledTickets_output_file_invalid_status = 'Action "%s", invalid status "%s"';
+$s_plugin_MantisScheduledTickets_output_file_invalid_action = 'Invalid action "%s"';
+$s_plugin_MantisScheduledTickets_output_file_unknown_node = 'Unknown node "%s"';
+$s_plugin_MantisScheduledTickets_output_file_diffs_no_diffs = 'No differences found between current and previous execution (see ~%d)';
+$s_plugin_MantisScheduledTickets_output_file_diffs_no_diff_in_output_file = 'No differences found in the output file. See ~%d for the output of the previous execution';
+$s_plugin_MantisScheduledTickets_output_file_diffs_no_previous_note = 'No previous execution found, nothing to diff against';
+$s_plugin_MantisScheduledTickets_output_file_diffs_previous_note = 'Differences between current and previous execution (see ~%d): ' . PHP_EOL . PHP_EOL . '%s';
+
 # ticket-related strings
+$s_plugin_MantisScheduledTickets_bug_template_category_id = 'Template/category record ID: %d';
 $s_plugin_MantisScheduledTickets_error_host_access_denied = 'Access denied (host)';
 $s_plugin_MantisScheduledTickets_error_user_access_denied = 'Access denied (user)';
 
 # email-related
-$s_plugin_MantisScheduledTickets_email_subject_validation = '[bug_report_auto] Validation report';
+$s_plugin_MantisScheduledTickets_email_subject_validation = '[bug_report_auto] Validation report [V:%s][U:%s]';
 $s_plugin_MantisScheduledTickets_email_subject_auto_report_error = '[bug_report_auto] Error report';
 $s_plugin_MantisScheduledTickets_email_subject_auto_report_success = '[bug_report_auto] Success report';
 $s_plugin_MantisScheduledTickets_email_invalid_templates = 'Invalid template(s):';
 $s_plugin_MantisScheduledTickets_email_tickets_successfully_created = 'The following tickets have been created successfully:';
 $s_plugin_MantisScheduledTickets_email_validation_report = 'Validation report';
 $s_plugin_MantisScheduledTickets_crontab_file = 'crontab file';
+$s_plugin_MantisScheduledTickets_update_available_yes = 'Y';
+$s_plugin_MantisScheduledTickets_update_available_no = 'N';
+$s_plugin_MantisScheduledTickets_update_disabled = 'D';
+$s_plugin_MantisScheduledTickets_validation_successful_yes = 'Y';
+$s_plugin_MantisScheduledTickets_validation_successful_no = 'N';
+
+# misc
+$s_plugin_MantisScheduledTickets_yes = 'yes';
+$s_plugin_MantisScheduledTickets_no = 'no';
+$s_plugin_MantisScheduledTickets_history_field = '%s (id %s)';

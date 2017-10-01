@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -35,18 +35,18 @@
 
     html_page_top( $t_page_title );
     print_manage_menu();
-    print_scheduled_tickets_menu();
+    mst_core_print_scheduled_tickets_menu();
 
 ?>
 
 <div align="center">
-    <form name="edit_frequency" method="post" action="<?php echo $t_edit_action; ?>">
+    <form name="edit_frequency" id="edit_frequency" method="post" action="<?php echo $t_edit_action; ?>">
         <?php
-            echo form_security_field( 'manage_frequency_edit' );
+            echo form_security_field( 'edit_frequency' );
         ?>
 
         <input type="hidden" name="frequency_id" value="<?php echo $t_frequency_id; ?>" />
-        <input type="hidden" name="old_name" value="<?php echo string_html_specialchars( $t_frequency['name'] ); ?>" />
+        <input type="hidden" name="old_name" value="<?php echo htmlspecialchars( $t_frequency['name'] ); ?>" />
         <input type="hidden" name="old_enabled" value="<?php echo $t_frequency['enabled']; ?>" />
         <input type="hidden" name="old_minute" value="<?php echo $t_frequency['minute']; ?>" />
         <input type="hidden" name="old_hour" value="<?php echo $t_frequency['hour']; ?>" />
@@ -61,23 +61,23 @@
                 </td>
             </tr>
 
-            <!-- Name -->
+            <!-- name -->
             <tr <?php echo helper_alternate_class();?>>
                 <td class="category" width="20%">
                     <span class="required">*</span><?php echo plugin_lang_get( 'frequency_name' ); ?>
                 </td>
                 <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index(); ?> type="text" name="name" size="60" maxlength="128" value="<?php echo $t_frequency['name']; ?>" />
+                    <input <?php echo helper_get_tab_index(); ?> type="text" name="name" id="name" size="60" maxlength="128" value="<?php echo htmlspecialchars( $t_frequency['name'] ); ?>" />
                 </td>
             </tr>
 
-            <!-- Name -->
+            <!-- enabled -->
             <tr <?php echo helper_alternate_class();?>>
                 <td class="category" width="20%">
                     <span class="required">*</span><?php echo plugin_lang_get( 'frequency_enabled' ); ?>
                 </td>
                 <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index(); ?> type="checkbox" name="enabled" <?php echo $t_frequency['enabled'] ? 'checked' : '' ?> />
+                    <input <?php echo helper_get_tab_index(); ?> type="checkbox" name="enabled" id="enabled" <?php echo $t_frequency['enabled'] ? 'checked' : '' ?> />
                 </td>
             </tr>
 
@@ -102,27 +102,27 @@
             <tr <?php echo helper_alternate_class(); ?>>
                 <!-- day of week -->
                 <td width="20%">
-                    <?php frequency_helper_render_day_of_week_options( $t_frequency['day_of_week'] ); ?>
+                    <?php mst_helper_render_day_of_week_options( $t_frequency['day_of_week'] ); ?>
                 </td>
 
                 <!-- month -->
                 <td width="20%">
-                    <?php frequency_helper_render_month_options( $t_frequency['month'] ); ?>
+                    <?php mst_helper_render_month_options( $t_frequency['month'] ); ?>
                 </td>
 
                 <!-- day of month -->
                 <td width="20%">
-                    <?php frequency_helper_render_day_of_month_options( $t_frequency['day_of_month'] ); ?>
+                    <?php mst_helper_render_day_of_month_options( $t_frequency['day_of_month'] ); ?>
                 </td>
 
                 <!-- hour -->
                 <td width="20%">
-                    <?php frequency_helper_render_hour_options( $t_frequency['hour'] ); ?>
+                    <?php mst_helper_render_hour_options( $t_frequency['hour'] ); ?>
                 </td>
 
                 <!-- minute -->
                 <td width="20%">
-                    <?php frequency_helper_render_minute_options( $t_frequency['minute'] ); ?>
+                    <?php mst_helper_render_minute_options( $t_frequency['minute'] ); ?>
                 </td>
             </tr>
 
@@ -143,6 +143,9 @@
     <!-- delete -->
     <div class="border center">
         <form name="delete_frequency" method="post" action="<?php echo $t_delete_page; ?>">
+            <?php
+                echo form_security_field( 'delete_frequency' );
+            ?>
             <input type="hidden" name="id" value="<?php echo $t_frequency_id; ?>" />
             <input type="submit" class="button" value="<?php echo plugin_lang_get( 'frequency_delete' ); ?>" />
         </form>
@@ -183,67 +186,69 @@
         </td>
     </tr>
     <?php
-        foreach ( $t_history as $t_item ) {
+        if( is_array( $t_history ) ) {
+            foreach( $t_history as $t_item ) {
     ?>
-    <tr <?php echo helper_alternate_class(); ?>>
-        <td class="small-caption" nowrap="nowrap">
-            <?php echo date( $t_normal_date_format, $t_item['date_modified'] ); ?>
-        </td>
-        <td class="small-caption">
-            <?php print_user( $t_item['user_id'] ); ?>
-        </td>
-        <td class="small-caption">
-            <?php
-                if( FREQUENCY_CHANGED == $t_item['type'] ) {
-                    echo plugin_lang_get( 'frequency_' . $t_item['field_name'] );
-                }
-            ?>
-        </td>
-        <td class="small-caption">
-            <?php
-                switch( $t_item['type'] ) {
-                    case FREQUENCY_ADDED:
-                        echo plugin_lang_get( 'frequency_added' );
-                        break;
-                    case FREQUENCY_ENABLED:
-                        echo plugin_lang_get( 'frequency_enabled' );
-                        break;
-                    case FREQUENCY_DISABLED:
-                        echo plugin_lang_get( 'frequency_disabled' );
-                        break;
-                    case FREQUENCY_CHANGED:
-                        switch( $t_item['field_name'] ) {
-                            case 'name':
-                            case 'enabled':
-                                echo $t_item['old_value'] . ' => ' . $t_item['new_value'];
-                                break;
-                            case 'minute':
-                                echo frequency_helper_minute_column( $t_item['old_value'] ) . ' => ' . frequency_helper_minute_column( $t_item['new_value'] );
-                                break;
-                            case 'hour':
-                                echo frequency_helper_hour_column( $t_item['old_value'] ) . ' => ' . frequency_helper_hour_column( $t_item['new_value'] );
-                                break;
-                            case 'day_of_month':
-                                echo frequency_helper_day_of_month_column( $t_item['old_value'] ) . ' => ' . frequency_helper_day_of_month_column( $t_item['new_value'] );
-                                break;
-                            case 'month':
-                                echo frequency_helper_month_column( $t_item['old_value'] ) . ' => ' . frequency_helper_month_column( $t_item['new_value'] );
-                                break;
-                            case 'day_of_week':
-                                echo frequency_helper_day_of_week_column( $t_item['old_value'] ) . ' => ' . frequency_helper_day_of_week_column( $t_item['new_value'] );
-                                break;
-                        }
-                        break;
-                    case FREQUENCY_DELETED:
-                        # we should never really get here... if the frequency was deleted, we wouldn't be rendering this page...
-                        echo plugin_lang_get( 'frequency_deleted' );
-                        break;
-                }
-            ?>
-        </td>
-    </tr>
+                <tr <?php echo helper_alternate_class(); ?>>
+                    <td class="small-caption" nowrap="nowrap">
+                        <?php echo date( $t_normal_date_format, $t_item['date_modified'] ); ?>
+                    </td>
+                    <td class="small-caption">
+                        <?php print_user( $t_item['user_id'] ); ?>
+                    </td>
+                    <td class="small-caption">
+                        <?php
+                            if( MST_FREQUENCY_CHANGED == $t_item['type'] ) {
+                                echo plugin_lang_get( 'frequency_' . $t_item['field_name'] );
+                            }
+                        ?>
+                    </td>
+                    <td class="small-caption">
+                        <?php
+                            switch( $t_item['type'] ) {
+                                case MST_FREQUENCY_ADDED:
+                                    echo plugin_lang_get( 'frequency_added' );
+                                    break;
+                                case MST_FREQUENCY_ENABLED:
+                                    echo plugin_lang_get( 'frequency_enabled' );
+                                    break;
+                                case MST_FREQUENCY_DISABLED:
+                                    echo plugin_lang_get( 'frequency_disabled' );
+                                    break;
+                                case MST_FREQUENCY_CHANGED:
+                                    switch( $t_item['field_name'] ) {
+                                        case 'name':
+                                        case 'enabled':
+                                            echo htmlspecialchars( $t_item['old_value'] ) . ' => ' . htmlspecialchars( $t_item['new_value'] );
+                                            break;
+                                        case 'minute':
+                                            echo mst_helper_minute_column( $t_item['old_value'] ) . ' => ' . mst_helper_minute_column( $t_item['new_value'] );
+                                            break;
+                                        case 'hour':
+                                            echo mst_helper_hour_column( $t_item['old_value'] ) . ' => ' . mst_helper_hour_column( $t_item['new_value'] );
+                                            break;
+                                        case 'day_of_month':
+                                            echo mst_helper_day_of_month_column( $t_item['old_value'] ) . ' => ' . mst_helper_day_of_month_column( $t_item['new_value'] );
+                                            break;
+                                        case 'month':
+                                            echo mst_helper_month_column( $t_item['old_value'] ) . ' => ' . mst_helper_month_column( $t_item['new_value'] );
+                                            break;
+                                        case 'day_of_week':
+                                            echo mst_helper_day_of_week_column( $t_item['old_value'] ) . ' => ' . mst_helper_day_of_week_column( $t_item['new_value'] );
+                                            break;
+                                    }
+                                    break;
+                                case MST_FREQUENCY_DELETED:
+                                    # we should never really get here... if the frequency was deleted, we wouldn't be rendering this page...
+                                    echo plugin_lang_get( 'frequency_deleted' );
+                                    break;
+                            }
+                        ?>
+                    </td>
+                </tr>
     <?php
-        } # end for loop
+            } # end for loop
+        }
     ?>
 </table>
 <?php

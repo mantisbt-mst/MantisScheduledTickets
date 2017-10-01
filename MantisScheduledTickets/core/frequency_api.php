@@ -20,24 +20,25 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
-define( 'ERROR_FREQUENCY_NAME_NOT_UNIQUE', 12151 );
-define( 'ERROR_FREQUENCY_NOT_UNIQUE', 12152 );
+define( 'MST_FREQUENCY_ADDED', 1 );
+define( 'MST_FREQUENCY_ENABLED', 2 );
+define( 'MST_FREQUENCY_DISABLED', 3 );
+define( 'MST_FREQUENCY_CHANGED', 4 );
+define( 'MST_FREQUENCY_DELETED', 5 );
 
-define( 'FREQUENCY_ADDED', 1 );
-define( 'FREQUENCY_ENABLED', 2 );
-define( 'FREQUENCY_DISABLED', 3 );
-define( 'FREQUENCY_CHANGED', 4 );
-define( 'FREQUENCY_DELETED', 5 );
+define( 'MST_MAX_DAY_OF_WEEK', 6 );
+define( 'MST_MAX_MONTH', 12 );
+define( 'MST_MAX_DAY_OF_MONTH', 31 );
+define( 'MST_MAX_HOUR', 23 );
+define( 'MST_MAX_MINUTE', 59 );
 
-define( 'MAX_DAY_OF_WEEK', 6 );
-define( 'MAX_MONTH', 12 );
-define( 'MAX_DAY_OF_MONTH', 31 );
-define( 'MAX_HOUR', 23 );
-define( 'MAX_MINUTE', 59 );
+define( 'MST_CRONTAB_STATUS_OK', 0 );
+define( 'MST_CRONTAB_STATUS_DISABLED', 1 );
+define( 'MST_CRONTAB_STATUS_NOT_OK', 2 );
 
 /**
  * Frequency class
@@ -46,37 +47,37 @@ class Frequency {
     /**
      * Frequency name
      */
-    protected $name = '';
+    protected $name = null;
 
     /**
      * Flag which indicates whether template is enabled or not
      */
-    protected $enabled = 1;
+    protected $enabled = null;
 
     /**
      * Minute component
      */
-    protected $minute = '*';
+    protected $minute = null;
 
     /**
      * Hour component
      */
-    protected $hour = '*';
+    protected $hour = null;
 
     /**
      * Day of month component
      */
-    protected $day_of_month = '*';
+    protected $day_of_month = null;
 
     /**
      * Month component
      */
-    protected $month = '*';
+    protected $month = null;
 
     /**
      * Day of week component
      */
-    protected $day_of_week = '*';
+    protected $day_of_week = null;
 
     /**
      * Setter
@@ -91,6 +92,7 @@ class Frequency {
         switch( $name ) {
             case 'enabled':
                 $value = (bool)$value;
+                break;
         }
 
         $this->$name = $value;
@@ -113,6 +115,10 @@ class Frequency {
  * Get all frequency records
  *
  * Get an array of all frequency records that match the given filter
+ *
+ * NOTE: When calling this function, the values provided via $p_filter
+ * MUST have already been cleansed (i.e. the value in the array should
+ * be the result of the appropriate db_prepare_* function).
  *
  * @param mixed $p_filter Filter array
  * @return mixed Array of frequency records
@@ -149,7 +155,7 @@ function frequency_get_all( $p_filter = null ) {
             FROM $t_frequency_table AS F";
 
     # add WHERE clause(s) corresponding to the given filters, if any
-    if( $p_filter ) {
+    if( is_array( $p_filter ) ) {
         foreach( $p_filter as $t_column => $t_values ) {
             $t_where[] = "$t_column = " . db_param();
             $t_params[] = $t_values;
@@ -163,10 +169,6 @@ function frequency_get_all( $p_filter = null ) {
     # run the query
     $result = db_query_bound( $query, $t_params );
 
-    if( 0 == db_num_rows( $result ) ) {
-        return null;
-    }
-
     $t_row_count = db_num_rows( $result );
     $t_frequencies = array();
 
@@ -178,6 +180,16 @@ function frequency_get_all( $p_filter = null ) {
 }
 
 /**
+ * Get active frequency records
+ *
+ * @return mixed Array of active frequency records
+ */
+function frequency_get_all_active() {
+    $t_filter = array( 'enabled' => 1 );
+    return frequency_get_all( $t_filter );
+}
+
+/**
  * Get enabled frequency records for crontab file operations
  *
  * Get enabled frequency records in a format that makes crontab file operations
@@ -186,22 +198,23 @@ function frequency_get_all( $p_filter = null ) {
  * @return mixed Array of frequency records
  */
 function frequency_get_for_crontab() {
-    $t_filter = array( 'enabled' => 1 );
-    $t_frequencies = frequency_get_all( $t_filter );
+    $t_frequencies = frequency_get_all_active();
     $t_crontab_frequencies = array();
 
-    foreach( $t_frequencies as $t_frequency ) {
-        array_push( $t_crontab_frequencies,
-            array(
-                'id' => $t_frequency['id'],
-                'schedule' => $t_frequency['minute'] . ' '.
-                    $t_frequency['hour'] . ' ' .
-                    $t_frequency['day_of_month'] . ' ' .
-                    $t_frequency['month'] . ' ' .
-                    $t_frequency['day_of_week'],
-                'matched' => 0
-            )
-        );
+    if( is_array( $t_frequencies ) ) {
+        foreach( $t_frequencies as $t_frequency ) {
+            array_push( $t_crontab_frequencies,
+                array(
+                    'id' => $t_frequency['id'],
+                    'schedule' => $t_frequency['minute'] . ' '.
+                        $t_frequency['hour'] . ' ' .
+                        $t_frequency['day_of_month'] . ' ' .
+                        $t_frequency['month'] . ' ' .
+                        $t_frequency['day_of_week'],
+                    'matched' => 0
+                )
+            );
+        }
     }
 
     return $t_crontab_frequencies;
@@ -214,34 +227,54 @@ function frequency_get_for_crontab() {
  * @return array Associative array representing a frequency record
  */
 function frequency_get_row( $p_frequency_id ) {
-    $p_filter = array( 'id' => $p_frequency_id );
-    $t_frequencies = frequency_get_all( $p_filter );
+    $t_filter = array( 'id' => db_prepare_int( $p_frequency_id ) );
+    $t_frequencies = frequency_get_all( $t_filter );
 
-    if( !is_array( $t_frequencies[0] ) ) {
+    if( false == is_array( $t_frequencies[0] ) ) {
         plugin_error( plugin_lang_get( 'error_frequency_not_found' ), ERROR );
-    } else {
-        return $t_frequencies[0];
     }
+
+    return $t_frequencies[0];
+}
+
+/**
+ * Get the name of the specified frequency record
+ *
+ * @param int $p_frequency_id Frequency id
+ * @return string Frequency name
+ */
+function frequency_get_name( $p_frequency_id ) {
+    $t_frequency = frequency_get_row( $p_frequency_id );
+
+    return $t_frequency['name'];
 }
 
 /**
  * Check whether the given frequency name is unique
  *
  * @param string $p_name Frequency name
- * @param int $p_id Frequency id to exclude
+ * @param int $p_frequency_id Frequency id to exclude
  * @return bool True if the given frequency name is unique, false otherwise
  */
-function frequency_name_is_unique( $p_name, $p_id = null ) {
+function frequency_name_is_unique( $p_name, $p_frequency_id = null ) {
     $t_frequency_table = plugin_table( 'frequency' );
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
 
-    $query = "SELECT COUNT(*)
-                FROM $t_frequency_table AS F
-                WHERE F.name = " . db_param();
+    $query = "SELECT
+                COUNT(*)
+            FROM $t_frequency_table AS F
+            WHERE F.name = " . db_param();
 
-    if( $p_id ) {
+    if( $p_frequency_id ) {
         $query .= " AND F.id <> " . db_param();
     }
-    $result = db_query_bound( $query, array( $p_name, $p_id ) );
+
+    $result = db_query_bound(
+        $query,
+        $p_frequency_id ?
+            array( $p_name, $c_frequency_id ) :
+            array( $p_name )
+    );
 
     if( 0 < db_result( $result ) ) {
         return false;
@@ -258,24 +291,31 @@ function frequency_name_is_unique( $p_name, $p_id = null ) {
  * @param string $p_day_of_month Day of month component
  * @param string $p_month Month component
  * @param string $p_day_of_week Day of week component
- * @param int $p_id Frequency id
+ * @param int $p_frequency_id Frequency id
  * @return bool True if the given frequency (the collection of individual components) is unique, false otherwise
  */
-function frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id = null ) {
+function frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id = null ) {
     $t_frequency_table = plugin_table( 'frequency' );
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
 
     $query = "SELECT COUNT(*)
-                FROM $t_frequency_table AS F
-                WHERE F.minute = " . db_param() . "
-                  AND F.hour = " . db_param() . "
-                  AND F.day_of_month = " . db_param() . "
-                  AND F.month = " . db_param() . "
-                  AND F.day_of_week = " . db_param();
+            FROM $t_frequency_table AS F
+            WHERE F.minute = " . db_param() . "
+              AND F.hour = " . db_param() . "
+              AND F.day_of_month = " . db_param() . "
+              AND F.month = " . db_param() . "
+              AND F.day_of_week = " . db_param();
 
-    if( $p_id ) {
+    if( $p_frequency_id ) {
         $query .= " AND F.id <> " . db_param();
     }
-    $result = db_query_bound( $query, array( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id ) );
+
+    $result = db_query_bound(
+        $query,
+        $p_frequency_id ?
+            array( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $c_frequency_id ) :
+            array( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week )
+    );
 
     if( 0 < db_result( $result ) ) {
         return false;
@@ -295,11 +335,11 @@ function frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_
  * @param string $p_day_of_month Day of month component
  * @param string $p_month Month component
  * @param string $p_day_of_week Day of week component
- * @param int $p_id Frequency id
+ * @param int $p_frequency_id Frequency id
  * @return void
  */
-function frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id = null ) {
-    if( !frequency_name_is_unique( $p_name, $p_id ) ) {
+function frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id = null ) {
+    if( false == frequency_name_is_unique( $p_name, $p_frequency_id ) ) {
         /* @todo
         error_parameters( plugin_lang_get( 'error_frequency_name_not_unique' ) );
         trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
@@ -308,13 +348,51 @@ function frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, 
         plugin_error( plugin_lang_get( 'error_frequency_name_not_unique' ), ERROR );
     }
 
-    if( !frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id ) ) {
+    if( false == frequency_is_unique( $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id ) ) {
         /* @todo
         error_parameters( plugin_lang_get( 'error_frequency_not_unique' ) );
         trigger_error( ERROR_PLUGIN_GENERIC, ERROR );
         */
 
         plugin_error( plugin_lang_get( 'error_frequency_not_unique' ), ERROR );
+    }
+}
+
+/**
+ * Ensure that the given value(s) are valid for a given crontab field
+ *
+ * $p_value should be a comma-separated list of integers within the range specified by $p_min_value and $p_max_value.
+ * The error corresponding to $p_error_string is thrown if validation fails.
+ *
+ * @param mixed $p_value Comma-separated list of values to check
+ * @param int $p_min_value Lower end of valid range
+ * @param int $p_max_value Upper end of valid range
+ * @param string $p_error_string Error to throw if/when validation fails.
+ */
+function frequency_ensure_valid_field_values( $p_value, $p_min_value, $p_max_value, $p_error_string ) {
+    # check the trivial cases first
+    if( '*' == $p_value ) {
+        return;
+    }
+
+    if( '' == trim( $p_value ) ) {
+        plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+    }
+
+    # is there anything in the given string that's NOT a space, a digit or a comma?
+    preg_match( '/[^\s\d,]/', $p_value, $t_matches );
+
+    if( $t_matches ) {
+        plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+    }
+
+    # validate that each value is within the given range
+    $t_values = explode( ',', $p_value );
+
+    foreach( $t_values as $t_value ) {
+        if( ( $p_min_value > (int)trim( $t_value ) ) || ( $p_max_value < (int)trim( $t_value ) ) ) {
+            plugin_error( plugin_lang_get( $p_error_string ), ERROR );
+        }
     }
 }
 
@@ -336,15 +414,41 @@ function frequency_add( $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month
         trigger_error( ERROR_EMPTY_FIELD, ERROR );
     }
 
+    frequency_ensure_valid_field_values( $p_minute, 0, 59, 'error_frequency_invalid_minute_value' );
+    frequency_ensure_valid_field_values( $p_hour, 0, 23, 'error_frequency_invalid_hour_value' );
+    frequency_ensure_valid_field_values( $p_day_of_month, 1, 31, 'error_frequency_invalid_day_of_month_value' );
+    frequency_ensure_valid_field_values( $p_month, 1, 12, 'error_frequency_invalid_month_value' );
+    frequency_ensure_valid_field_values( $p_day_of_week, 0, 6, 'error_frequency_invalid_day_of_week_value' );
+
     frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week );
 
     $t_frequency_table = plugin_table( 'frequency' );
+    $c_enabled = db_prepare_bool( $p_enabled );
 
     $query = "INSERT INTO $t_frequency_table
-                (name, enabled, minute, hour, day_of_month, month, day_of_week)
-                VALUES
-                (" . db_param() . ", " . db_param() . ", " . db_param() . ", ". db_param() . ", ". db_param() . ", ". db_param() . ", ". db_param() . ");";
-    db_query_bound( $query, array( $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week ) );
+                (
+                    name,
+                    enabled,
+                    minute,
+                    hour,
+                    day_of_month,
+                    month,
+                    day_of_week
+                )
+            VALUES
+                (" .
+                    db_param() . ", " .
+                    db_param() . ", " .
+                    db_param() . ", " .
+                    db_param() . ", " .
+                    db_param() . ", " .
+                    db_param() . ", " .
+                    db_param() .
+                ");";
+    db_query_bound(
+        $query,
+        array( $p_name, $c_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week )
+    );
 
     return db_insert_id( $t_frequency_table );
 }
@@ -352,7 +456,7 @@ function frequency_add( $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month
 /**
  * Update frequency record
  *
- * @param int $p_id Frequency record id
+ * @param int $p_frequency_id Frequency record id
  * @param string $p_name Frequency name
  * @param bool $p_enabled Boolean flag which indicates whether frequency is enabled or not
  * @param string $p_minute Minute component
@@ -362,15 +466,17 @@ function frequency_add( $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month
  * @param string $p_day_of_week Day of week component
  * @return void
  */
-function frequency_update( $p_id, $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week ) {
+function frequency_update( $p_frequency_id, $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week ) {
     if( '' == $p_name ) {
         error_parameters( plugin_lang_get( 'frequency_name' ) );
         trigger_error( ERROR_EMPTY_FIELD, ERROR );
     }
 
-    frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id );
+    frequency_ensure_unique( $p_name, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_frequency_id );
 
     $t_frequency_table = plugin_table( 'frequency' );
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
+    $c_enabled = db_prepare_bool( $p_enabled );
 
     $query = "UPDATE $t_frequency_table
                 SET
@@ -382,273 +488,46 @@ function frequency_update( $p_id, $p_name, $p_enabled, $p_minute, $p_hour, $p_da
                     month = " . db_param() . ",
                     day_of_week = " . db_param() . "
                 WHERE id = " . db_param() . ";";
-    db_query_bound( $query, array( $p_name, $p_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $p_id ) );
+    db_query_bound(
+        $query,
+        array( $p_name, $c_enabled, $p_minute, $p_hour, $p_day_of_month, $p_month, $p_day_of_week, $c_frequency_id )
+    );
 }
 
 /**
  * Delete frequency record
  *
- * @param int $p_id Frequency record id
+ * @param int $p_frequency_id Frequency record id
  * @return void
  */
-function frequency_delete( $p_id ) {
+function frequency_delete( $p_frequency_id ) {
     $t_frequency_table = plugin_table( 'frequency' );
 
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
+
     $query = "DELETE FROM $t_frequency_table WHERE id = " . db_param();
-    db_query_bound( $query, array( $p_id ) );
+    db_query_bound( $query, array( $c_frequency_id ) );
 
     return true;
 }
 
 /**
- * Render 'day of week' column
- *
- * @param string $p_day_of_week Day of week component
- * @return string Comma-separated list of days of the week
- */
-function frequency_helper_day_of_week_column( $p_day_of_week ) {
-    if( '*' == $p_day_of_week ) {
-        return plugin_lang_get( 'frequency_day_of_week_all' );
-    }
-
-    $t_day_of_week = split( ',', $p_day_of_week );
-    $t_day_of_week_names = array();
-
-    foreach( $t_day_of_week as $day_of_week ) {
-        $t_day_of_week_names[] = plugin_lang_get( 'frequency_day_of_week_' . $day_of_week );
-    }
-
-    return join( ', ', $t_day_of_week_names );
-}
-
-/**
- * Render 'month' column
- *
- * @param string $p_month Month component
- * @return string Comma-separated list of month names
- */
-function frequency_helper_month_column( $p_month ) {
-    if( '*' == $p_month ) {
-        return plugin_lang_get( 'frequency_month_all' );
-    }
-
-    $t_month = split( ',', $p_month );
-    $t_month_names = array();
-
-    foreach( $t_month as $month ) {
-        $t_month_names[] = plugin_lang_get( 'frequency_month_' . $month );
-    }
-
-    return join( ', ', $t_month_names );
-}
-
-/**
- * Render 'day of month' column
- *
- * @param string $p_day_of_month Day of month component
- * @return string Comma-separated list of days of the month
- */
-function frequency_helper_day_of_month_column( $p_day_of_month ) {
-    if( '*' == $p_day_of_month ) {
-        return plugin_lang_get( 'frequency_day_of_month_all' );
-    }
-
-    $t_day_of_month = split( ',', $p_day_of_month );
-    $t_day_of_month_names = array();
-
-    foreach( $t_day_of_month as $day_of_month ) {
-        $t_day_of_month_names[] = plugin_lang_get( 'frequency_day_of_month_' . $day_of_month );
-    }
-
-    return join( ', ', $t_day_of_month_names );
-}
-
-/**
- * Render 'hour' column
- *
- * @param string $p_hour Hour component
- * @return string Comma-separated list of hours
- */
-function frequency_helper_hour_column( $p_hour ) {
-    if( '*' == $p_hour ) {
-        return plugin_lang_get( 'frequency_hour_all' );
-    }
-
-    $t_hour = split( ',', $p_hour );
-    $t_hour_names = array();
-
-    foreach( $t_hour as $hour ) {
-        $t_hour_names[] = plugin_lang_get( 'frequency_hour_' . $hour );
-    }
-
-    return join( ', ', $t_hour_names );
-}
-
-/**
- * Render 'minute' column
- *
- * @param string $p_minute Minute component
- * @return string Comma-separated list of minutes
- */
-function frequency_helper_minute_column( $p_minute ) {
-    if( '*' == $p_minute ) {
-        return plugin_lang_get( 'frequency_minute_all' );
-    }
-
-    $t_minute = split( ',', $p_minute );
-    $t_minute_names = array();
-
-    foreach( $t_minute as $minute ) {
-        $t_minute_names[] = plugin_lang_get( 'frequency_minute_' . $minute );
-    }
-
-    return join( ', ', $t_minute_names );
-}
-
-/**
- * Render 'day of week' select list
- *
- * @param string $p_day_of_week Day of week component
- * @return void
- */
-function frequency_helper_render_day_of_week_options( $p_day_of_week = '*' ) {
-    if( '*' != $p_day_of_week ) {
-        $t_day_of_week = split( ',', $p_day_of_week );
-    } else {
-        $t_day_of_week = array();
-    }
-    $t_all_checked = ( '*' == $p_day_of_week );
-
-    echo '<input type="radio" name="day_of_week" id="day_of_week" value="all"' . ( $t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'day_of_week_select\', true);">' . plugin_lang_get( 'frequency_day_of_week_all' ) . '<br />';
-    echo '<input type="radio" name="day_of_week" id="day_of_week" value="select"' . ( !$t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'day_of_week_select\', false);" />' . plugin_lang_get( 'frequency_day_of_week_choose' ) . ' ';
-    echo '<select name="day_of_week_select[]" id="day_of_week_select" size="7" style="vertical-align:top;" multiple' . ( $t_all_checked ? ' disabled>' : '>' );
-
-    for( $i = 0; $i <= MAX_DAY_OF_WEEK; $i++ ) {
-        $selected = in_array( $i, $t_day_of_week ) ? ' selected' : '';
-        echo "<option value=\"$i\"$selected>" . plugin_lang_get( 'frequency_day_of_week_' . $i ) . '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
- * Render 'month' select list
- *
- * @param string $p_month Month component
- * @return void
- */
-function frequency_helper_render_month_options( $p_month = '*' ) {
-    if( '*' != $p_month ) {
-        $t_month = split( ',', $p_month );
-    } else {
-        $t_month = array();
-    }
-    $t_all_checked = ( '*' == $p_month );
-
-    echo '<input type="radio" name="month" id="month" value="all"' . ( $t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'month_select\', true);">' . plugin_lang_get( 'frequency_month_all' ) . '<br />';
-    echo '<input type="radio" name="month" id="month" value="select"' . ( !$t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'month_select\', false);" />' . plugin_lang_get( 'frequency_month_choose' ) . ' ';
-    echo '<select name="month_select[]" id="month_select" size="7" style="vertical-align:top;" multiple' . ( $t_all_checked ? ' disabled>' : '>' );
-
-    for( $i = 1; $i <= MAX_MONTH; $i++ ) {
-        $selected = in_array( $i, $t_month ) ? ' selected' : '';
-        echo "<option value=\"$i\"$selected>" . plugin_lang_get( 'frequency_month_' . $i ) . '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
- * Render 'day of month' select list
- *
- * @param string $p_day_of_month Day of month component
- * @return void
- */
-function frequency_helper_render_day_of_month_options( $p_day_of_month = '*' ) {
-    if( '*' != $p_day_of_month ) {
-        $t_day_of_month = split( ',', $p_day_of_month );
-    } else {
-        $t_day_of_month = array();
-    }
-    $t_all_checked = ( '*' == $p_day_of_month );
-
-    echo '<input type="radio" name="day_of_month" id="day_of_month" value="all"' . ( $t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'day_of_month_select\', true);">' . plugin_lang_get( 'frequency_day_of_month_all' ) . '<br />';
-    echo '<input type="radio" name="day_of_month" id="day_of_month" value="select"' . ( !$t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'day_of_month_select\', false);" />' . plugin_lang_get( 'frequency_day_of_month_choose' ) . ' ';
-    echo '<select name="day_of_month_select[]" id="day_of_month_select" size="7" style="vertical-align:top;" multiple' . ( $t_all_checked ? ' disabled>' : '>' );
-
-    for( $i = 1; $i <= MAX_DAY_OF_MONTH; $i++ ) {
-        $selected = in_array( $i, $t_day_of_month ) ? ' selected' : '';
-        echo "<option value=\"$i\"$selected>" . plugin_lang_get( 'frequency_day_of_month_' . $i ) . '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
- * Render 'hour' select list
- *
- * @param string $p_hour Hour component
- * @return void
- */
-function frequency_helper_render_hour_options( $p_hour = '*' ) {
-    if( '*' != $p_hour ) {
-        $t_hour = split( ',', $p_hour );
-    } else {
-        $t_hour = array();
-    }
-    $t_all_checked = ( '*' == $p_hour );
-
-    echo '<input type="radio" name="hour" id="hour" value="all"' . ( $t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'hour_select\', true);">' . plugin_lang_get( 'frequency_hour_all' ) . '<br />';
-    echo '<input type="radio" name="hour" id="hour" value="select"' . ( !$t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'hour_select\', false);" />' . plugin_lang_get( 'frequency_hour_choose' ) . ' ';
-    echo '<select name="hour_select[]" id="hour_select" size="7" style="vertical-align:top;" multiple' . ( $t_all_checked ? ' disabled>' : '>' );
-
-    for( $i = 0; $i <= MAX_HOUR; $i++ ) {
-        $selected = in_array( $i, $t_hour ) ? ' selected' : '';
-        echo "<option value=\"$i\"$selected>" . plugin_lang_get( 'frequency_hour_' . $i ) . '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
- * Render 'minute' select list
- *
- * @param string $p_minute Minute component
- * @return void
- */
-function frequency_helper_render_minute_options( $p_minute = '*' ) {
-    if( '*' != $p_minute ) {
-        $t_minute = split( ',', $p_minute );
-    } else {
-        $t_minute = array();
-    }
-    $t_all_checked = ( '*' == $p_minute );
-
-    echo '<input type="radio" name="minute" id="minute" value="all"' . ( $t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'minute_select\', true);">' . plugin_lang_get( 'frequency_minute_all' ) . '<br />';
-    echo '<input type="radio" name="minute" id="minute" value="select"' . ( !$t_all_checked ? ' checked="checked"' : '' ) . ' onclick="javascript:enable_disable(\'minute_select\', false);" />' . plugin_lang_get( 'frequency_minute_choose' ) . ' ';
-    echo '<select name="minute_select[]" id="minute_select" size="7" style="vertical-align:top;" multiple' . ( $t_all_checked ? ' disabled>' : '>' );
-
-    for( $i = 0; $i <= MAX_MINUTE; $i++ ) {
-        $selected = in_array( $i, $t_minute ) ? ' selected' : '';
-        echo "<option value=\"$i\"$selected>" . plugin_lang_get( 'frequency_minute_' . $i ) . '</option>';
-    }
-
-    echo '</select>';
-}
-
-/**
  * Log frequency event (add, delete)
  *
- * @param int $p_id Frequency id
+ * @param int $p_frequency_id Frequency id
  * @param int $p_event_type Event type
  * @return void
  */
-function frequency_log_event_special( $p_id, $p_event_type ) {
+function frequency_log_event_special( $p_frequency_id, $p_event_type ) {
     $t_frequency_history_table = plugin_table( 'frequency_history' );
-    $p_user_id = auth_get_current_user_id();
+    $t_user_id = auth_get_current_user_id();
+
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
+    $c_event_type = db_prepare_int( $p_event_type );
 
     $query = "INSERT $t_frequency_history_table (user_id, frequency_id, date_modified, type)
                 VALUES (" . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ');';
-    db_query_bound( $query, array( $p_user_id, $p_id, db_now(), $p_event_type ) );
+    db_query_bound( $query, array( $t_user_id, $c_frequency_id, db_now(), $c_event_type ) );
 }
 
 /**
@@ -656,67 +535,93 @@ function frequency_log_event_special( $p_id, $p_event_type ) {
  *
  * Record the actual changes made (old/new values)
  *
- * @param int $p_id Frequency record id
+ * @param int $p_frequency_id Frequency record id
  * @param string $p_field_name Field name
  * @param mixed $p_old_value Old field value
  * @param mixed $p_new_value New field value
  * @return void
  */
-function frequency_log_event( $p_id, $p_field_name , $p_old_value, $p_new_value ) {
+function frequency_log_event( $p_frequency_id, $p_field_name , $p_old_value, $p_new_value ) {
     $t_frequency_history_table = plugin_table( 'frequency_history' );
-    $p_user_id = auth_get_current_user_id();
+    $t_user_id = auth_get_current_user_id();
 
-    $query = "INSERT $t_frequency_history_table (user_id, frequency_id, date_modified, type, field_name, old_value, new_value)
-                VALUES (" . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' .  db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ');';
-    db_query_bound( $query, array( $p_user_id, $p_id, db_now(), FREQUENCY_CHANGED, $p_field_name , $p_old_value, $p_new_value ) );
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
+
+    $query = "INSERT
+                $t_frequency_history_table
+            (
+                user_id,
+                frequency_id,
+                date_modified,
+                type,
+                field_name,
+                old_value,
+                new_value
+            )
+            VALUES
+            (" .
+                db_param() . ', ' .
+                db_param() . ', ' .
+                db_param() . ', ' .
+                db_param() . ', ' .
+                db_param() . ', ' .
+                db_param() . ', ' .
+                db_param() .
+            ');';
+    db_query_bound(
+        $query,
+        array( $t_user_id, $c_frequency_id, db_now(), MST_FREQUENCY_CHANGED, $p_field_name , $p_old_value, $p_new_value )
+    );
 }
 
 /**
  * Determine differences between two given frequency records and log them
  *
- * @param int $p_id Frequency record id
+ * @param int $p_frequency_id Frequency record id
  * @param mixed $p_old_record Frequency object representing the old record
  * @param mixed $p_new_record Frequency object representing the new record
  * @return void
  */
-function frequency_log_changes( $p_id, $p_old_record, $p_new_record ) {
+function frequency_log_changes( $p_frequency_id, $p_old_record, $p_new_record ) {
     if( $p_old_record->name != $p_new_record->name ) {
-        frequency_log_event( $p_id, 'name', $p_old_record->name, $p_new_record->name );
+        frequency_log_event( $p_frequency_id, 'name', $p_old_record->name, $p_new_record->name );
     }
 
     if( $p_old_record->enabled != $p_new_record->enabled ) {
-        frequency_log_event_special( $p_id, $p_new_record->enabled ? FREQUENCY_ENABLED : FREQUENCY_DISABLED );
+        frequency_log_event_special( $p_frequency_id, $p_new_record->enabled ? MST_FREQUENCY_ENABLED : MST_FREQUENCY_DISABLED );
     }
 
     if( $p_old_record->minute != $p_new_record->minute ) {
-        frequency_log_event( $p_id, 'minute', $p_old_record->minute, $p_new_record->minute );
+        frequency_log_event( $p_frequency_id, 'minute', $p_old_record->minute, $p_new_record->minute );
     }
 
     if( $p_old_record->hour != $p_new_record->hour ) {
-        frequency_log_event( $p_id, 'hour', $p_old_record->hour, $p_new_record->hour );
+        frequency_log_event( $p_frequency_id, 'hour', $p_old_record->hour, $p_new_record->hour );
     }
 
     if( $p_old_record->day_of_month != $p_new_record->day_of_month ) {
-        frequency_log_event( $p_id, 'day_of_month', $p_old_record->day_of_month, $p_new_record->day_of_month );
+        frequency_log_event( $p_frequency_id, 'day_of_month', $p_old_record->day_of_month, $p_new_record->day_of_month );
     }
 
     if( $p_old_record->month != $p_new_record->month ) {
-        frequency_log_event( $p_id, 'month', $p_old_record->month, $p_new_record->month );
+        frequency_log_event( $p_frequency_id, 'month', $p_old_record->month, $p_new_record->month );
     }
 
     if( $p_old_record->day_of_week != $p_new_record->day_of_week ) {
-        frequency_log_event( $p_id, 'day_of_week', $p_old_record->day_of_week, $p_new_record->day_of_week );
+        frequency_log_event( $p_frequency_id, 'day_of_week', $p_old_record->day_of_week, $p_new_record->day_of_week );
     }
 }
 
 /**
  * Get frequency history
  *
- * @param int $p_id Frequency record id
+ * @param int $p_frequency_id Frequency record id
  * @return mixed Array of frequency history records
  */
-function frequency_get_history( $p_id ) {
+function frequency_get_history( $p_frequency_id ) {
     $t_frequency_history_table = plugin_table( 'frequency_history' );
+
+    $c_frequency_id = db_prepare_int( $p_frequency_id );
 
     $query = "SELECT
                 H.date_modified,
@@ -729,11 +634,7 @@ function frequency_get_history( $p_id ) {
             WHERE H.frequency_id = " . db_param() . "
             ORDER BY
               H.date_modified;";
-    $result = db_query_bound( $query, array( $p_id ) );
-
-     if( 0 == db_num_rows( $result ) ) {
-        return null;
-    }
+    $result = db_query_bound( $query, array( $c_frequency_id ) );
 
     $t_row_count = db_num_rows( $result );
     $t_history = array();

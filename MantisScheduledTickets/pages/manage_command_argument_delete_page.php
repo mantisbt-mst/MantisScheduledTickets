@@ -26,33 +26,39 @@
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'manage_template_category_edit' );
-
-    $f_template_category_id = gpc_get_int( 'id' );
+    $f_command_argument_id = gpc_get_int( 'id' );
+    $f_template_category_id = gpc_get_int( 'template_category_id' );
     $f_template_id = gpc_get_int( 'template_id' );
-    $f_project_category_id = gpc_get( 'category_id' );
-    $f_frequency_id = gpc_get_int( 'frequency_id' );
-    $f_user_id = gpc_get_int( 'user_id', 0 );
-    list( $t_project_id, $t_category_id ) = explode( ',', $f_project_category_id, 2 );
 
-    $t_old_record = new TemplateCategory;
-    $t_old_record->project_id = gpc_get_int( 'old_project_id' );
-    $t_old_record->category_id = gpc_get_int( 'old_category_id' );
-    $t_old_record->frequency_id = gpc_get_int( 'old_frequency_id' );
-    $t_old_record->user_id = gpc_get_int( 'old_user_id' );
+    form_security_validate( 'delete_command_argument' );
 
-    $t_new_record = new TemplateCategory;
-    $t_new_record->project_id = $t_project_id;
-    $t_new_record->category_id = $t_category_id;
-    $t_new_record->frequency_id = $f_frequency_id;
-    $t_new_record->user_id = $f_user_id;
+    helper_ensure_confirmed(
+        plugin_lang_get( 'command_argument_delete_sure_msg' ), lang_get( 'delete_link' )
+    );
 
-    template_category_update( $f_template_category_id, $t_project_id, $t_category_id, $f_frequency_id, $f_user_id );
-    template_category_log_changes( $f_template_id, $f_template_category_id, $t_old_record, $t_new_record );
+    $t_old_command_arguments = command_arguments_format(
+        command_argument_get_all( $f_template_category_id ),
+        MST_ESCAPE_FOR_NONE
+    );
 
-    form_security_purge( 'manage_template_category_edit' );
+    command_argument_delete( array( 'id' => db_prepare_int( $f_command_argument_id ) ) );
 
-    $t_redirect_url = plugin_page( 'manage_template_edit_page', true ) . '&id=' . $f_template_id;
+    $t_command_arguments = command_arguments_format(
+        command_argument_get_all( $f_template_category_id ),
+        MST_ESCAPE_FOR_NONE
+    );
+
+    template_category_log_event(
+        $f_template_id,
+        $f_template_category_id,
+        'template_command_arguments',
+        $t_old_command_arguments,
+        $t_command_arguments
+    );
+
+    form_security_purge( 'delete_command_argument' );
+
+    $t_redirect_url = plugin_page( 'manage_template_category_edit_page', true ) . '&id=' . $f_template_category_id;
 
     html_page_top( null, $t_redirect_url );
 

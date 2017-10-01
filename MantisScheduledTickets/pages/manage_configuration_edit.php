@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -30,8 +30,11 @@
 
     $f_manage_threshold = gpc_get_int( 'manage_threshold' );
     $f_email_reports_to = gpc_get_string( 'email_reports_to' );
-    $f_send_email_on_successful_auto_report = gpc_get_bool( 'send_email_on_successful_auto_report' );
+    $f_send_email_on_success = gpc_get_bool( 'send_email_on_success' );
     $f_auto_reporter_username = gpc_get_string( 'auto_reporter_username' );
+    $f_crontab_base_url = gpc_get_string( 'crontab_base_url' );
+    $f_enable_commands = gpc_get_bool( 'enable_commands' );
+    $f_check_for_updates = gpc_get_bool( 'check_for_updates' );
 
     if( '' == $f_email_reports_to ) {
         error_parameters( plugin_lang_get( 'config_email_reports_to' ) );
@@ -53,12 +56,32 @@
         plugin_config_set( 'email_reports_to', $f_email_reports_to );
     }
 
-    if( plugin_config_get( 'send_email_on_successful_auto_report' ) != $f_send_email_on_successful_auto_report ) {
-        plugin_config_set( 'send_email_on_successful_auto_report', $f_send_email_on_successful_auto_report );
+    if( plugin_config_get( 'send_email_on_success' ) != $f_send_email_on_success ) {
+        plugin_config_set( 'send_email_on_success', $f_send_email_on_success );
     }
 
     if( plugin_config_get( 'auto_reporter_username' ) != $f_auto_reporter_username ) {
         plugin_config_set( 'auto_reporter_username', $f_auto_reporter_username );
+    }
+
+    if( plugin_config_get( 'crontab_base_url' ) != $f_crontab_base_url ) {
+        plugin_config_set( 'crontab_base_url', $f_crontab_base_url );
+    }
+
+    if( plugin_config_get( 'enable_commands' ) != $f_enable_commands ) {
+        plugin_config_set( 'enable_commands', $f_enable_commands );
+
+        $t_templates = template_get_all();
+
+        if( is_array( $t_templates ) ) {
+            foreach( $t_templates as $t_template ) {
+                template_log_event_special( $t_template['id'], MST_TEMPLATE_CONFIG_CHANGED, $f_enable_commands );
+            }
+        }
+    }
+
+    if( plugin_config_get( 'check_for_updates' ) != $f_check_for_updates ) {
+        plugin_config_set( 'check_for_updates', $f_check_for_updates );
     }
 
     form_security_purge( 'manage_configuration' );

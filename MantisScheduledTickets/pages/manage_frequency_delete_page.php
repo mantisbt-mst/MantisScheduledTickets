@@ -20,21 +20,31 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
+
+    form_security_validate( 'delete_frequency' );
 
     $t_frequency_id = gpc_get_int( 'id' );
     $t_manage_frequency_page = plugin_page( 'manage_frequency_page', true );
 
     helper_ensure_confirmed( plugin_lang_get( 'frequency_delete_sure_msg' ), plugin_lang_get( 'frequency_delete' ) );
 
+    $t_frequency = frequency_get_row( $t_frequency_id );
+
+    if( ( 0 != $t_frequency['template_count'] ) || ( 0 != $t_frequency['bug_count'] ) ) {
+        plugin_error( plugin_lang_get( 'error_frequency_cannot_be_deleted' ), ERROR );
+    }
+
     frequency_delete( $t_frequency_id );
-    frequency_log_event_special( $t_frequency_id, FREQUENCY_DELETED );
+    frequency_log_event_special( $t_frequency_id, MST_FREQUENCY_DELETED );
     cron_regenerate_crontab_file();
     cron_validate_crontab_file();
+
+    form_security_purge( 'delete_frequency' );
 
     html_page_top( null, $t_manage_frequency_page );
 

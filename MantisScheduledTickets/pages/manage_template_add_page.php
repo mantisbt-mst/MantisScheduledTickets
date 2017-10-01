@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -31,16 +31,16 @@
 
     html_page_top( $t_page_title );
     print_manage_menu();
-    print_scheduled_tickets_menu();
+    mst_core_print_scheduled_tickets_menu();
 
     $t_action_page = plugin_page( 'manage_template_add' );
 
 ?>
 
 <div align="center">
-    <form name="add_template" method="post" action="<?php echo $t_action_page; ?>">
+    <form name="add_template" id="add_template" method="post" action="<?php echo $t_action_page; ?>">
         <?php
-            echo form_security_field( 'manage_template_add' );
+            echo form_security_field( 'add_template' );
         ?>
 
         <table class="width75" cellspacing="1">
@@ -54,8 +54,8 @@
                 <td class="category" width="20%">
                     <span class="required">*</span><?php echo plugin_lang_get( 'template_summary' ); ?>
                 </td>
-                <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="text" name="summary" size="105" maxlength="128" />
+                <td width="80%">
+                    <input <?php echo helper_get_tab_index() ?> type="text" name="summary" id="summary" size="105" maxlength="128" />
                 </td>
             </tr>
 
@@ -63,8 +63,8 @@
                 <td class="category" width="20%">
                     <span class="required">*</span><?php echo plugin_lang_get( 'template_description' ); ?>
                 </td>
-                <td width="80%" colspan="4">
-                    <textarea <?php echo helper_get_tab_index() ?> name="description" cols="80" rows="10"></textarea>
+                <td width="80%">
+                    <textarea <?php echo helper_get_tab_index() ?> name="description" id="description" cols="80" rows="10"></textarea>
                 </td>
             </tr>
 
@@ -72,14 +72,38 @@
                 <td class="category" width="20%">
                     <span class="required">*</span><?php echo plugin_lang_get( 'template_enabled' ); ?>
                 </td>
-                <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" checked />
+                <td width="80%">
+                    <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" id="enabled" checked />
                 </td>
             </tr>
 
+            <?php
+                if( plugin_config_get( 'enable_commands' ) ) {
+            ?>
+                <tr <?php echo helper_alternate_class();?>>
+                    <td class="category" width="20%">
+                        <?php echo plugin_lang_get( 'template_command' ); ?>
+                    </td>
+                    <td width="80%">
+                        <?php mst_helper_commands( $t_template['command'] ); ?>
+                    </td>
+                </tr>
+
+                <tr <?php echo helper_alternate_class(); ?>>
+                    <td class="category" width="20%">
+                        <?php echo plugin_lang_get( 'template_diff_flag' ); ?>
+                    </td>
+                    <td width="80%">
+                        <input <?php echo helper_get_tab_index(); ?> type="checkbox" name="diff_flag" id="diff_flag" disabled="disabled" />
+                    </td>
+                </tr>
+            <?php
+                }
+            ?>
+
             <!-- buttons -->
             <tr>
-                <td colspan="5">
+                <td colspan="2">
                     <input <?php echo helper_get_tab_index() ?> type="submit" class="button" value="<?php echo plugin_lang_get( 'template_add' ); ?>" />
                 </td>
             </tr>

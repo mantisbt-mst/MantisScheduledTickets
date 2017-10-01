@@ -20,58 +20,77 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'manage_frequency_edit' );
+    form_security_validate( 'edit_frequency' );
 
-    $f_id = gpc_get_int( 'frequency_id' );
+    $f_frequency_id = gpc_get_int( 'frequency_id' );
     $f_name = gpc_get_string( 'name' );
     $f_enabled = gpc_get_bool( 'enabled', false );
     $f_minute = gpc_get_string( 'minute' );
-    $f_minute_select = gpc_get_string_array( 'minute_select', '' );
+    $f_minute_select = gpc_get_string_array( 'minute_select', null );
     $f_hour = gpc_get_string( 'hour' );
-    $f_hour_select = gpc_get_string_array( 'hour_select', '' );
+    $f_hour_select = gpc_get_string_array( 'hour_select', null );
     $f_day_of_month = gpc_get_string( 'day_of_month' );
-    $f_day_of_month_select = gpc_get_string_array( 'day_of_month_select', '' );
+    $f_day_of_month_select = gpc_get_string_array( 'day_of_month_select', null );
     $f_month = gpc_get_string( 'month' );
-    $f_month_select = gpc_get_string_array( 'month_select', '' );
+    $f_month_select = gpc_get_string_array( 'month_select', null );
     $f_day_of_week = gpc_get_string( 'day_of_week' );
-    $f_day_of_week_select = gpc_get( 'day_of_week_select', '' );
+    $f_day_of_week_select = gpc_get( 'day_of_week_select', null );
 
     if( 'all' == $f_minute ) {
         $t_minute = '*';
     } else {
+        if( null === $f_minute_select ) {
+            plugin_error( plugin_lang_get( 'error_frequency_no_minute_specified' ), ERROR );
+        }
+
         $t_minute = join( ',', $f_minute_select );
     }
 
     if( 'all' == $f_hour ) {
         $t_hour = '*';
     } else {
+        if( null === $f_hour_select ) {
+            plugin_error( plugin_lang_get( 'error_frequency_no_hour_specified' ), ERROR );
+        }
+
         $t_hour = join( ',', $f_hour_select );
     }
 
     if( 'all' == $f_day_of_month ) {
         $t_day_of_month = '*';
     } else {
+        if( null === $f_day_of_month_select ) {
+            plugin_error( plugin_lang_get( 'error_frequency_no_day_of_month_specified' ), ERROR );
+        }
+
         $t_day_of_month = join( ',', $f_day_of_month_select );
     }
 
     if( 'all' == $f_month ) {
         $t_month = '*';
     } else {
+        if( null === $f_month_select ) {
+            plugin_error( plugin_lang_get( 'error_frequency_no_month_specified' ), ERROR );
+        }
+
         $t_month = join( ',', $f_month_select );
     }
 
     if( 'all' == $f_day_of_week ) {
         $t_day_of_week = '*';
     } else {
+        if( null === $f_day_of_week_select ) {
+            plugin_error( plugin_lang_get( 'error_frequency_no_day_of_week_specified' ), ERROR );
+        }
+
         $t_day_of_week = join( ',', $f_day_of_week_select );
     }
-
     if( ( 'all' == $f_minute ) || ( 'all' == $f_hour ) ) {
         helper_ensure_confirmed( plugin_lang_get( 'frequency_dangerous_sure_msg' ), plugin_lang_get( 'frequency_dangerous_proceed' ) );
     }
@@ -96,12 +115,12 @@
 
 
     # update frequency record
-    frequency_update( $f_id, $f_name, $f_enabled, $t_minute, $t_hour, $t_day_of_month, $t_month, $t_day_of_week );
-    frequency_log_changes( $f_id, $t_old_record, $t_new_record );
+    frequency_update( $f_frequency_id, $f_name, $f_enabled, $t_minute, $t_hour, $t_day_of_month, $t_month, $t_day_of_week );
+    frequency_log_changes( $f_frequency_id, $t_old_record, $t_new_record );
     cron_regenerate_crontab_file();
     cron_validate_crontab_file();
 
-    form_security_purge( 'manage_frequency_edit' );
+    form_security_purge( 'edit_frequency' );
 
     $t_redirect_url = plugin_page( 'manage_frequency_page', true );
 

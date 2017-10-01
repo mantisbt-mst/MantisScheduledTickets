@@ -20,23 +20,29 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'manage_template_delete' );
+    form_security_validate( 'delete_template' );
 
     $t_template_id = gpc_get_int( 'id' );
     $t_manage_template_page = plugin_page( 'manage_template_page', true );
 
     helper_ensure_confirmed( plugin_lang_get( 'template_delete_sure_msg' ), plugin_lang_get( 'template_delete' ) );
 
-    template_delete( $t_template_id );
-    template_log_event_special( $t_template_id, TEMPLATE_DELETED );
+    $t_template = template_get_row( $t_template_id );
 
-    form_security_purge( 'manage_template_delete' );
+    if( 0 != $t_template['bug_count'] ) {
+        plugin_error( plugin_lang_get( 'error_template_cannot_be_deleted' ), ERROR );
+    }
+
+    template_delete( $t_template_id );
+    template_log_event_special( $t_template_id, MST_TEMPLATE_DELETED );
+
+    form_security_purge( 'delete_template' );
 
     html_page_top( null, $t_manage_template_page );
 

@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -31,16 +31,16 @@
 
     html_page_top( $t_page_title );
     print_manage_menu();
-    print_scheduled_tickets_menu();
+    mst_core_print_scheduled_tickets_menu();
 
     $t_action_page = plugin_page( 'manage_frequency_add' );
 
 ?>
 
 <div align="center">
-    <form name="add_frequency" method="post" action="<?php echo $t_action_page; ?>">
+    <form name="add_frequency" id="add_frequency" method="post" action="<?php echo $t_action_page; ?>">
         <?php
-            echo form_security_field( 'manage_frequency_add' );
+            echo form_security_field( 'add_frequency' );
         ?>
 
         <table class="width75" cellspacing="1">
@@ -55,7 +55,7 @@
                     <span class="required">*</span><?php echo plugin_lang_get( 'frequency_name' ); ?>
                 </td>
                 <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="text" name="name" size="60" maxlength="128" />
+                    <input <?php echo helper_get_tab_index() ?> type="text" name="name" id="name" size="60" maxlength="128" />
                 </td>
             </tr>
 
@@ -64,7 +64,7 @@
                     <span class="required">*</span><?php echo plugin_lang_get( 'frequency_enabled' ); ?>
                 </td>
                 <td width="80%" colspan="4">
-                    <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" checked />
+                    <input <?php echo helper_get_tab_index() ?> type="checkbox" name="enabled" id="enabled" checked="checked" />
                 </td>
             </tr>
 
@@ -89,27 +89,27 @@
             <tr <?php echo helper_alternate_class(); ?>>
                 <!-- day of week -->
                 <td width="20%">
-                    <?php frequency_helper_render_day_of_week_options(); ?>
+                    <?php mst_helper_render_day_of_week_options(); ?>
                 </td>
 
                 <!-- month -->
                 <td width="20%">
-                    <?php frequency_helper_render_month_options(); ?>
+                    <?php mst_helper_render_month_options(); ?>
                 </td>
 
                 <!-- day of month -->
                 <td width="20%">
-                    <?php frequency_helper_render_day_of_month_options(); ?>
+                    <?php mst_helper_render_day_of_month_options(); ?>
                 </td>
 
                 <!-- hour -->
                 <td width="20%">
-                    <?php frequency_helper_render_hour_options(); ?>
+                    <?php mst_helper_render_hour_options(); ?>
                 </td>
 
                 <!-- minute -->
                 <td width="20%">
-                    <?php frequency_helper_render_minute_options(); ?>
+                    <?php mst_helper_render_minute_options(); ?>
                 </td>
             </tr>
 

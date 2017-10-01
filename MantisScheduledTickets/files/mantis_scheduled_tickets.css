@@ -20,12 +20,16 @@ along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
 .config_ok {
   background-color: #d2f5b0;
+}
+
+.config_warn {
+  background-color: #fff494;
 }
 
 .config_not_ok {
@@ -82,4 +86,12 @@ along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
 
 .template_bug_associated {
   background-color: #d2f5b0;
+}
+
+.template_command_invalid {
+  background-color: #fff494;
+}
+
+.argument_edited td {
+  background-color: #d2f5b0 !important;
 }

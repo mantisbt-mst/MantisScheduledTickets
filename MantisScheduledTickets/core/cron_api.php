@@ -20,15 +20,15 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
-define( 'CRONTAB_COMMENT_START', '### MantisScheduledTickets - start' );
-define( 'CRONTAB_COMMENT_END', '### MantisScheduledTickets - end' );
-define( 'CRONTAB_COMMAND_OPTIONS', '-q --secure-protocol=auto --no-check-certificate' );
-define( 'CRONTAB_VALIDATION_SCHEDULE', '0 0 * * *' );
-define( 'CRONTAB_COMMAND', 'wget' );
+define( 'MST_CRONTAB_COMMENT_START', '### MantisScheduledTickets - start' );
+define( 'MST_CRONTAB_COMMENT_END', '### MantisScheduledTickets - end' );
+define( 'MST_CRONTAB_COMMAND_OPTIONS', '-q --secure-protocol=auto --no-check-certificate' );
+define( 'MST_CRONTAB_VALIDATION_SCHEDULE', '0 0 * * *' );
+define( 'MST_CRONTAB_COMMAND', 'wget' );
 
 /**
  * Regenerate the crontab file for the current user
@@ -42,16 +42,19 @@ define( 'CRONTAB_COMMAND', 'wget' );
  */
 function cron_regenerate_crontab_file() {
     $t_crontab_file = trim( cron_get_non_plugin_entries( cron_get_crontab_file() ) );
-    $t_crontab_file .= PHP_EOL . PHP_EOL . CRONTAB_COMMENT_START . PHP_EOL;
+    $t_crontab_file .= PHP_EOL . PHP_EOL . MST_CRONTAB_COMMENT_START . PHP_EOL;
+    $t_cron_bug_report_command = cron_get_bug_report_command();
 
     $t_frequencies = frequency_get_for_crontab();
 
-    foreach( $t_frequencies as $t_frequency ) {
-        $t_crontab_file .= $t_frequency['schedule'] . ' ' . cron_get_bug_report_command() . $t_frequency['id'] . PHP_EOL;
+    if( is_array( $t_frequencies ) ) {
+        foreach( $t_frequencies as $t_frequency ) {
+            $t_crontab_file .= $t_frequency['schedule'] . ' ' . $t_cron_bug_report_command . $t_frequency['id'] . PHP_EOL;
+        }
     }
 
-    $t_crontab_file .= CRONTAB_VALIDATION_SCHEDULE . ' ' . cron_get_validation_command() . PHP_EOL;
-    $t_crontab_file .= CRONTAB_COMMENT_END;
+    $t_crontab_file .= MST_CRONTAB_VALIDATION_SCHEDULE . ' ' . cron_get_validation_command() . PHP_EOL;
+    $t_crontab_file .= MST_CRONTAB_COMMENT_END;
 
     # escape double quotes...
     $t_crontab_file = str_replace( '"', '"\""', $t_crontab_file );
@@ -94,32 +97,40 @@ function cron_validate_crontab_file( $p_interactive = true ) {
     $t_frequencies = frequency_get_for_crontab();
 
     # attempt to match crontab entries to enabled frequency records
-    foreach( $t_crontab_file as $t_job_idx => $t_job ) {
-        foreach( $t_frequencies as $t_frequency_idx => $t_frequency ) {
-            if( $t_job['id'] == $t_frequency['id'] ) {
-                $t_crontab_file[$t_job_idx]['matched'] = 1;
-                $t_frequencies[$t_frequency_idx]['matched'] = 1;
-                break;
+    if( is_array( $t_crontab_file ) ) {
+        foreach( $t_crontab_file as $t_job_idx => $t_job ) {
+            if( is_array( $t_frequencies ) ) {
+                foreach( $t_frequencies as $t_frequency_idx => $t_frequency ) {
+                    if( $t_job['id'] == $t_frequency['id'] ) {
+                        $t_crontab_file[$t_job_idx]['matched'] = 1;
+                        $t_frequencies[$t_frequency_idx]['matched'] = 1;
+                        break;
+                    }
+                }
             }
         }
     }
 
     # check if there are any unmatched jobs/frequencies
-    foreach( $t_crontab_file as $t_job ) {
-        if( 0 == $t_job['matched'] ) {
-            if( $p_interactive ) {
-                plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
-            } else {
+    if( is_array( $t_crontab_file ) ) {
+        foreach( $t_crontab_file as $t_job ) {
+            if( 0 == $t_job['matched'] ) {
+                if( $p_interactive ) {
+                    plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
+                }
+
                 return false;
             }
         }
     }
 
-    foreach( $t_frequencies as $t_frequency ) {
-        if( 0 == $t_frequency['matched'] ) {
-            if( $p_interactive ) {
-                plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
-            } else {
+    if( is_array( $t_frequencies ) ) {
+        foreach( $t_frequencies as $t_frequency ) {
+            if( 0 == $t_frequency['matched'] ) {
+                if( $p_interactive ) {
+                    plugin_error( plugin_lang_get( 'error_invalid_crontab_file' ), ERROR );
+                }
+
                 return false;
             }
         }
@@ -150,18 +161,20 @@ function cron_get_plugin_entries( $p_crontab_file ) {
     $t_jobs = array();
     $t_cron_bug_report_command = cron_get_bug_report_command();
 
-    foreach( $t_lines as $t_line ) {
-        if( strpos( $t_line, $t_cron_bug_report_command ) ) {
-            // get rid of the command and only keep the frequency id
-            $t_components = explode( ' ', str_replace( '"', '', str_replace( $t_cron_bug_report_command, '', $t_line ) ) );
-            $t_jobs[$t_components[5]] = array(
-                'id' => $t_components[5],
-                'schedule' => $t_components[0] . ' ' .
-                    $t_components[1] . ' ' .
-                    $t_components[2] . ' ' .
-                    $t_components[3] . ' ' .
-                    $t_components[4] . ' ',
-                'matched' => 0 );
+    if( is_array( $t_lines ) ) {
+        foreach( $t_lines as $t_line ) {
+            if( strpos( $t_line, $t_cron_bug_report_command ) ) {
+                // get rid of the command and only keep the frequency id
+                $t_components = explode( ' ', str_replace( '"', '', str_replace( $t_cron_bug_report_command, '', $t_line ) ) );
+                $t_jobs[$t_components[5]] = array(
+                    'id' => $t_components[5],
+                    'schedule' => $t_components[0] . ' ' .
+                        $t_components[1] . ' ' .
+                        $t_components[2] . ' ' .
+                        $t_components[3] . ' ' .
+                        $t_components[4] . ' ',
+                    'matched' => 0 );
+            }
         }
     }
 
@@ -180,12 +193,14 @@ function cron_get_non_plugin_entries( $p_crontab_file ) {
     $t_cron_bug_report_command = cron_get_bug_report_command();
     $t_cron_validate_command = cron_get_validation_command();
 
-    foreach( $t_lines as $t_line ) {
-        if( false === strpos( $t_line, CRONTAB_COMMENT_START ) &&
-            false === strpos( $t_line, CRONTAB_COMMENT_END ) &&
-            false === strpos( $t_line, $t_cron_bug_report_command ) &&
-            false === strpos( $t_line, $t_cron_validate_command ) ) {
-            $t_new_file[] = $t_line;
+    if( is_array( $t_lines ) ) {
+        foreach( $t_lines as $t_line ) {
+            if( false === strpos( $t_line, MST_CRONTAB_COMMENT_START ) &&
+                false === strpos( $t_line, MST_CRONTAB_COMMENT_END ) &&
+                false === strpos( $t_line, $t_cron_bug_report_command ) &&
+                false === strpos( $t_line, $t_cron_validate_command ) ) {
+                $t_new_file[] = $t_line;
+            }
         }
     }
 
@@ -201,7 +216,37 @@ function cron_get_non_plugin_entries( $p_crontab_file ) {
 function cron_get_command( $p_script_name ) {
     global $g_path;
 
-    return CRONTAB_COMMAND . ' ' . CRONTAB_COMMAND_OPTIONS . ' ' . $g_path . str_replace( '&', '\&', plugin_page( $p_script_name, true ) );
+    return MST_CRONTAB_COMMAND . ' ' . MST_CRONTAB_COMMAND_OPTIONS . ' ' .
+        cron_get_url( $g_path, plugin_config_get( 'crontab_base_url' ) ) .
+        str_replace( '&', '\&', plugin_page( $p_script_name, true ) );
+}
+
+/**
+ * Get the correct URL for use in the crontab file
+ *
+ * @param string Base Mantis URL
+ * @param string $p_crontab_base_url Crontab base URL
+ * @return string URL to use in the crontab file
+ */
+function cron_get_url( $p_path, $p_crontab_base_url ) {
+    $t_path = $p_path;
+
+    preg_match( '/(https?:\/\/)([^:\/]*)(:\d+)?(\/.*)?/', $t_path, $t_matches );
+
+    if( is_array( $t_matches ) ) {
+        # replace the first match (the original input string) with the crontab base URL
+        $t_matches[0] = $p_crontab_base_url;
+
+        # blank out matches 1, 2, 3 (the protocol, host and port matches)
+        unset( $t_matches[1] );
+        unset( $t_matches[2] );
+        unset( $t_matches[3] );
+
+        # re-assemble the URL
+        $t_path = join( '', $t_matches );
+    }
+
+    return $t_path;
 }
 
 /**

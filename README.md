@@ -1,6 +1,6 @@
-# Mantis Scheduled Tickets 0.3.0
+# Mantis Scheduled Tickets 0.4.0
 
-Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
 
 ## Installation
 
@@ -9,7 +9,7 @@ directory
 2. Log into Mantis using an account that has sufficient privileges to
 install plugins
 3. Go to 'Manage' > 'Manage Plugins'
-4. Click the 'Install' link next to 'Mantis Scheduled Tickets 0.3.0'
+4. Click the 'Install' link next to 'Mantis Scheduled Tickets 0.4.0'
 5. There should now be a new link ('Manage MantisScheduledTickets')
 under the 'Manage' menu
 

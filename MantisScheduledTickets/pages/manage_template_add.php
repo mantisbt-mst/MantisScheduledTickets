@@ -20,26 +20,28 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
 
-    form_security_validate( 'manage_template_add' );
+    form_security_validate( 'add_template' );
 
     $f_summary = gpc_get_string( 'summary' );
     $f_description = gpc_get_string( 'description' );
     $f_enabled = gpc_get_bool( 'enabled', false );
+    $f_command = gpc_get_string( 'command', null );
+    $f_diff_flag = gpc_get_bool( 'diff_flag', false );
 
-    $t_template_id = template_add( $f_summary, $f_description, $f_enabled );
-    template_log_event_special( $t_template_id, TEMPLATE_ADDED );
+    $t_template_id = template_add( $f_summary, $f_description, $f_enabled, $f_command, $f_diff_flag );
+    template_log_event_special( $t_template_id, MST_TEMPLATE_ADDED );
 
     if( false === $f_enabled ) {
-        template_log_event_special( $t_template_id, TEMPLATE_DISABLED );
+        template_log_event_special( $t_template_id, MST_TEMPLATE_DISABLED );
     }
 
-    form_security_purge( 'manage_template_add' );
+    form_security_purge( 'add_template' );
 
     $t_redirect_url = plugin_page( 'manage_template_page', true );
 

@@ -20,7 +20,7 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2016 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
+ * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
  * @link http://www.mantis-scheduled-tickets.net
  */
 
@@ -29,11 +29,17 @@
 
     html_page_top( plugin_lang_get( 'title_templates' ) );
     print_manage_menu();
-    print_scheduled_tickets_menu( MST_MANAGE_TEMPLATE_PAGE );
+    mst_core_print_scheduled_tickets_menu( MST_MANAGE_TEMPLATE_PAGE );
 
     $t_template_edit_page = plugin_page( 'manage_template_edit_page' ) . '&id=';
 
     $t_templates = template_get_all();
+
+    $t_enable_commands = plugin_config_get( 'enable_commands' );
+
+    if( $t_enable_commands ) {
+        $t_valid_commands = mst_helper_get_valid_commands();
+    }
 
 ?>
 
@@ -69,10 +75,23 @@
     <?php
     if( is_array( $t_templates ) ) {
         foreach( $t_templates as $t_template ) {
-            $t_category_count_class = ( 0 == $t_template['category_count'] ) ? 'template_category_unassociated' : 'template_category_associated';
-            $t_bug_count_class = ( 0 == $t_template['bug_count'] ) ? 'template_bug_unassociated' : 'template_bug_associated';
+            $t_id = $t_template['id'];
+            $t_category_count_class = ( 0 == $t_template['category_count'] ) ?
+                'template_category_unassociated' :
+                'template_category_associated';
+            $t_bug_count_class = ( 0 == $t_template['bug_count'] ) ?
+                'template_bug_unassociated' :
+                'template_bug_associated';
 
-            if( 0 == $t_template['deleted_category_count'] && 0 == $t_template['deleted_user_count'] ) {
+            if( $t_enable_commands ) {
+                $t_command_is_valid = in_array( $t_template['command'], $t_valid_commands );
+            } else {
+                $t_command_is_valid = true;
+            }
+
+            if( ( 0 == $t_template['deleted_category_count'] ) &&
+                ( 0 == $t_template['deleted_user_count'] ) &&
+                $t_command_is_valid ) {
                 $t_status_class = 'template_status_ok';
                 $t_status = plugin_lang_get( 'legend_template_status_ok' );
             } else {
@@ -83,21 +102,20 @@
             if( 0 == $t_template['enabled'] ) {
                 $t_strike_start = '<strike>';
                 $t_strike_end = '</strike>';
-            }
-            else {
+            } else {
                 $t_strike_start = $t_strike_end = '';
             }
         ?>
             <tr <?php echo helper_alternate_class( $i ) ?>>
                 <td>
-                    <a href="<?php echo $t_template_edit_page . $t_template['id']; ?>">
-                        <?php echo $t_strike_start; echo $t_template['summary']; echo $t_strike_end; ?>
+                    <a href="<?php echo $t_template_edit_page . $t_template['id']; ?>" id="template_summary_<?php echo $t_id; ?>">
+                        <?php echo $t_strike_start; echo htmlspecialchars( $t_template['summary'] ); echo $t_strike_end; ?>
                     </a>
                 </td>
-                <td><?php echo $t_template['description']; ?></td>
-                <td class="<?php echo $t_category_count_class; ?>"><?php echo $t_template['category_count']; ?></td>
-                <td class="<?php echo $t_status_class; ?>"><?php echo $t_status; ?></td>
-                <td class="<?php echo $t_bug_count_class; ?>"><?php echo $t_template['bug_count']; ?></td>
+                <td id="template_description_<?php echo $t_id; ?>"><?php echo htmlspecialchars( $t_template['description'] ); ?></td>
+                <td id="category_count_<?php echo $t_id; ?>" class="<?php echo $t_category_count_class; ?>"><?php echo $t_template['category_count']; ?></td>
+                <td id="template_status_<?php echo $t_id; ?>" class="<?php echo $t_status_class; ?>"><?php echo $t_status; ?></td>
+                <td id="bug_count_<?php echo $t_id; ?>" class="<?php echo $t_bug_count_class; ?>"><?php echo $t_template['bug_count']; ?></td>
             </tr>
     <?php
         }
