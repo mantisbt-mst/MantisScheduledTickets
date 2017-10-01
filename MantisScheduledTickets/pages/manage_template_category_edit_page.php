@@ -52,11 +52,6 @@
 
 ?>
 
-<script type="text/javascript">
-    var buttonAddLabel = '<?php echo plugin_lang_get( 'template_command_argument_button_add' ); ?>';
-    var buttonUpdateLabel = '<?php echo plugin_lang_get( 'template_command_argument_button_update' ); ?>';
-</script>
-
 <div align="center">
     <form name="edit_template_category" id="edit_template_category" method="post" action="<?php echo $t_edit_action; ?>">
         <?php
@@ -165,7 +160,7 @@
                                     <td id="name_<?php echo $t_id; ?>"><?php echo $t_argument_name; ?></td>
                                     <td id="value<?php echo $t_id; ?>"><?php echo $t_argument_value; ?></td>
                                     <td class="center">
-                                        <input type="button" class="button-small" onclick="javascript:populate_command_argument_form(<?php echo $t_id; ?>, '<?php echo $t_argument_name; ?>', '<?php echo command_argument_format( $t_argument_value, MST_ESCAPE_FOR_JS ); ?>');" value="<?php echo lang_get( 'edit_link' ); ?>" id="edit_<?php echo $t_id; ?>" />
+                                        <input type="button" class="button-small mst_edit_command_argument" data-id="<?php echo $t_id; ?>" data-argument-name="<?php echo $t_argument_name; ?>" data-argument-value="<?php echo command_argument_format( $t_argument_value, MST_ESCAPE_FOR_JS ); ?>" value="<?php echo lang_get( 'edit_link' ); ?>" id="edit_<?php echo $t_id; ?>" />
                                         <form name="delete_command_argument" method="post" action="<?php echo $t_delete_argument_action; ?>">
                                             <?php
                                                 echo form_security_field( 'delete_command_argument' );
@@ -222,7 +217,7 @@
                         <tr>
                             <td colspan="2">
                                 <input <?php echo helper_get_tab_index(); ?> type="submit" id="submit_button" class="button" value="<?php echo plugin_lang_get( 'template_command_argument_button_add' ); ?>" />
-                                <input <?php echo helper_get_tab_index(); ?> type="reset" class="button" value="<?php echo plugin_lang_get( 'template_command_argument_button_reset' ); ?>" onclick="javascript:reset_command_argument_form();" />
+                                <input <?php echo helper_get_tab_index(); ?> type="reset" class="button mst_form_reset_button" value="<?php echo plugin_lang_get( 'template_command_argument_button_reset' ); ?>" />
                             </td>
                         </tr>
 

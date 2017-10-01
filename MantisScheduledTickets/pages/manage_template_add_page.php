@@ -113,8 +113,3 @@
 
 <?php
 	html_page_bottom();
-?>
-
-<script type="text/javascript">
-    focus_on_first_element();
-</script>

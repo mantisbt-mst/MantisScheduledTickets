@@ -40,7 +40,7 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
         $this->page = 'manage_configuration_edit_page';
 
         $this->requires = array(
-                'MantisCore' => '1.2.0'
+                'MantisCore' => '1.3.0'
             );
 
         $this->author = 'MantisScheduledTickets Team';

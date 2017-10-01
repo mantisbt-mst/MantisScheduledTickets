@@ -42,14 +42,13 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
     html_page_top();
 
     echo '<br /><div align="center">';
-    print_hr();
     echo $p_message;
 
     echo '<form method="post" action="' . string_attribute( form_action_self() ) . '">';
     # CSRF protection not required here - user needs to confirm action
     # before the form is accepted.
-    print_hidden_inputs( gpc_strip_slashes( $_POST ) );
-    print_hidden_inputs( gpc_strip_slashes( $_GET ) );
+    print_hidden_inputs( $_POST );
+    print_hidden_inputs( $_GET );
 
     echo '<input type="hidden" name="_confirmed" value="1" /><br /><br />';
 
@@ -61,7 +60,6 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
 
     echo '</form>';
 
-    print_hr();
     echo '</div>';
     html_page_bottom();
     exit;
@@ -107,7 +105,7 @@ function mst_helper_commands( $p_command ) {
     $t_commands = mst_helper_get_valid_commands();
     $t_command_found = false;
 
-    $t_select = '<select name="command" id="command" onchange="javascript:enable_disable_diff(\'command\', \'diff_flag\');">';
+    $t_select = '<select name="command" id="command">';
 
     if( is_array( $t_commands ) ) {
         foreach( $t_commands as $t_command ) {
@@ -261,15 +259,13 @@ function mst_helper_render_day_of_week_options( $p_day_of_week = '*' ) {
     }
     $t_all_checked = ( '*' == $p_day_of_week );
 
-    echo '<input type="radio" name="day_of_week" id="day_of_week" value="all"' .
-        ( $t_all_checked ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'day_of_week_select\', true);">' .
+    echo '<input type="radio" name="day_of_week" id="day_of_week_radio_all" value="all"' .
+        ( $t_all_checked ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_day_of_week_all' ) . '<br />';
-    echo '<input type="radio" name="day_of_week" id="day_of_week" value="select"' .
-        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'day_of_week_select\', false);" />' .
+    echo '<input type="radio" name="day_of_week" id="day_of_week_radio_select" value="select"' .
+        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_day_of_week_choose' ) . ' ';
-    echo '<select name="day_of_week_select[]" id="day_of_week_select" size="7" style="vertical-align:top;" multiple' .
+    echo '<select name="day_of_week_select[]" id="day_of_week_select" size="7" class="top_align" multiple' .
         ( $t_all_checked ? ' disabled="disabled">' : '>' );
 
     for( $i = 0; $i <= MST_MAX_DAY_OF_WEEK; $i++ ) {
@@ -294,15 +290,13 @@ function mst_helper_render_month_options( $p_month = '*' ) {
     }
     $t_all_checked = ( '*' == $p_month );
 
-    echo '<input type="radio" name="month" id="month" value="all"' .
-        ( $t_all_checked ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'month_select\', true);">' .
+    echo '<input type="radio" name="month" id="month_radio_all" value="all"' .
+        ( $t_all_checked ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_month_all' ) . '<br />';
-    echo '<input type="radio" name="month" id="month" value="select"' .
-        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'month_select\', false);" />' .
+    echo '<input type="radio" name="month" id="month_radio_select" value="select"' .
+        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_month_choose' ) . ' ';
-    echo '<select name="month_select[]" id="month_select" size="7" style="vertical-align:top;" multiple' .
+    echo '<select name="month_select[]" id="month_select" size="7" class="top_align" multiple' .
         ( $t_all_checked ? ' disabled="disabled">' : '>' );
 
     for( $i = 1; $i <= MST_MAX_MONTH; $i++ ) {
@@ -327,15 +321,13 @@ function mst_helper_render_day_of_month_options( $p_day_of_month = '*' ) {
     }
     $t_all_checked = ( '*' == $p_day_of_month );
 
-    echo '<input type="radio" name="day_of_month" id="day_of_month" value="all"' .
-        ( $t_all_checked ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'day_of_month_select\', true);">' .
+    echo '<input type="radio" name="day_of_month" id="day_of_month_radio_all" value="all"' .
+        ( $t_all_checked ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_day_of_month_all' ) . '<br />';
-    echo '<input type="radio" name="day_of_month" id="day_of_month" value="select"' .
-        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'day_of_month_select\', false);" />' .
+    echo '<input type="radio" name="day_of_month" id="day_of_month_radio_select" value="select"' .
+        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_day_of_month_choose' ) . ' ';
-    echo '<select name="day_of_month_select[]" id="day_of_month_select" size="7" style="vertical-align:top;" multiple' .
+    echo '<select name="day_of_month_select[]" id="day_of_month_select" size="7" class="top_align" multiple' .
         ( $t_all_checked ? ' disabled="disabled">' : '>' );
 
     for( $i = 1; $i <= MST_MAX_DAY_OF_MONTH; $i++ ) {
@@ -360,15 +352,13 @@ function mst_helper_render_hour_options( $p_hour = '*' ) {
     }
     $t_all_checked = ( '*' == $p_hour );
 
-    echo '<input type="radio" name="hour" id="hour" value="all"' .
-        ( $t_all_checked ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'hour_select\', true);">' .
+    echo '<input type="radio" name="hour" id="hour_radio_all" value="all"' .
+        ( $t_all_checked ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_hour_all' ) . '<br />';
-    echo '<input type="radio" name="hour" id="hour" value="select"' .
-        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'hour_select\', false);" />' .
+    echo '<input type="radio" name="hour" id="hour_radio_select" value="select"' .
+        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_hour_choose' ) . ' ';
-    echo '<select name="hour_select[]" id="hour_select" size="7" style="vertical-align:top;" multiple' .
+    echo '<select name="hour_select[]" id="hour_select" size="7" class="top_align" multiple' .
         ( $t_all_checked ? ' disabled="disabled">' : '>' );
 
     for( $i = 0; $i <= MST_MAX_HOUR; $i++ ) {
@@ -393,15 +383,13 @@ function mst_helper_render_minute_options( $p_minute = '*' ) {
     }
     $t_all_checked = ( '*' == $p_minute );
 
-    echo '<input type="radio" name="minute" id="minute" value="all"' .
-        ( $t_all_checked ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'minute_select\', true);">' .
+    echo '<input type="radio" name="minute" id="minute_radio_all" value="all"' .
+        ( $t_all_checked ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_minute_all' ) . '<br />';
-    echo '<input type="radio" name="minute" id="minute" value="select"' .
-        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) .
-        ' onclick="javascript:enable_disable(\'minute_select\', false);" />' .
+    echo '<input type="radio" name="minute" id="minute_radio_select" value="select"' .
+        ( ( false == $t_all_checked ) ? ' checked="checked"' : '' ) . ' />' .
         plugin_lang_get( 'frequency_minute_choose' ) . ' ';
-    echo '<select name="minute_select[]" id="minute_select" size="7" style="vertical-align:top;" multiple' .
+    echo '<select name="minute_select[]" id="minute_select" size="7" class="top_align" multiple' .
         ( $t_all_checked ? ' disabled="disabled">' : '>' );
 
     for( $i = 0; $i <= MST_MAX_MINUTE; $i++ ) {

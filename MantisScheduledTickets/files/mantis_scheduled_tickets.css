@@ -95,3 +95,7 @@ along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
 .argument_edited td {
   background-color: #d2f5b0 !important;
 }
+
+.top_align {
+    vertical-align: top;
+}

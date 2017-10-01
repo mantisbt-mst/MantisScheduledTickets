@@ -94,7 +94,7 @@ function command_argument_get_all( $p_template_category_id ) {
             WHERE TCCA.template_category_id = " . db_param();
 
     # run the query
-    $result = db_query_bound( $query, $c_template_category_id );
+    $result = db_query_bound( $query, array( $c_template_category_id ) );
 
     if( 0 == db_num_rows( $result ) ) {
         return null;

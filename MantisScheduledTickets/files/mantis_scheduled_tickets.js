@@ -24,8 +24,11 @@ along with MantisScheduledTickets.  If not, see <http://www.gnu.org/licenses/>.
  * @link http://www.mantis-scheduled-tickets.net
  */
 
+var buttonAddLabel = 'Add';
+var buttonUpdateLabel = 'Update';
+
 function enable_disable( id, disabled ) {
-    document.getElementById(id).disabled = disabled;
+    $('#' + id).prop('disabled', disabled);
 }
 
 function enable_disable_diff( id1, id2 ) {
@@ -44,18 +47,8 @@ function enable_disable_diff( id1, id2 ) {
 }
 
 function focus_on_first_element() {
-    var forms = document.forms;
-
-    // skip the first two forms on the page ("select project" and "jump to issue", respectively)
-    if( forms  && forms.length > 2 ) {
-        for( var i = 2; i < forms.length; i++ ) {
-            for( var j = 0; j < forms[i].length; j++ ) {
-                if( forms[i][j].disabled == false && forms[i][j].style.display != 'none' && !forms[i][j].readonly != undefined && forms[i][j].type != 'hidden' ) {
-                    forms[i][j].focus();
-                    return;
-                }
-            }
-        }
+    if (window.location.href.indexOf('MantisScheduledTickets') != -1 ) {
+        $('.mst_form').find('input[type=text],textarea,select').filter(':visible:first').focus();
     }
 }
 
@@ -107,3 +100,70 @@ function populate_command_argument_form(id, argument_name, argument_value) {
         row.className = 'argument_edited ' + row.className;
     }
 }
+
+function bind_events() {
+    if (window.location.href.indexOf('MantisScheduledTickets') == -1 ) {
+        return;
+    }
+
+    $('#day_of_week_radio_all').bind('click', function() {
+        enable_disable('day_of_week_select', true);
+    });
+
+    $('#day_of_week_radio_select').bind('click', function() {
+        enable_disable('day_of_week_select', false);
+    });
+
+    $('#month_radio_all').bind('click', function() {
+        enable_disable('month_select', true);
+    });
+
+    $('#month_radio_select').bind('click', function() {
+        enable_disable('month_select', false);
+    });
+
+    $('#day_of_month_radio_all').bind('click', function() {
+        enable_disable('day_of_month_select', true);
+    });
+
+    $('#day_of_month_radio_select').bind('click', function() {
+        enable_disable('day_of_month_select', false);
+    });
+
+    $('#hour_radio_all').bind('click', function() {
+        enable_disable('hour_select', true);
+    });
+
+    $('#hour_radio_select').bind('click', function() {
+        enable_disable('hour_select', false);
+    });
+
+    $('#minute_radio_all').bind('click', function() {
+        enable_disable('minute_select', true);
+    });
+
+    $('#minute_radio_select').bind('click', function() {
+        enable_disable('minute_select', false);
+    });
+
+    $('#command').bind('click', function() {
+        enable_disable_diff('command', 'diff_flag');
+    });
+
+    $('.mst_form_reset_button').bind('click', function() {
+        reset_command_argument_form();
+    });
+
+    $('.mst_edit_command_argument').bind('click', function(event) {
+        id = event.target.id.replace('edit_', '');
+        argument_name = $('#' + event.target.id).attr('data-argument-name');
+        argument_value = $('#' + event.target.id).attr('data-argument-value');
+
+        populate_command_argument_form(id, argument_name, argument_value);
+    });
+}
+
+$(function() {
+    focus_on_first_element();
+    bind_events();
+});

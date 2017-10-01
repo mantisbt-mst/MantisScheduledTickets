@@ -124,7 +124,7 @@
                 # Allow plugins to post-process bug data with the new bug ID
                 event_signal( 'EVENT_REPORT_BUG', array( $t_bug_data, $t_bug_id ) );
 
-                email_new_bug( $t_bug_id );
+                email_bug_added( $t_bug_id );
 
                 # execute command specified at the template level
                 if( $t_enable_commands ) {
