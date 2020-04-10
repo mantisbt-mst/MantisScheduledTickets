@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
 $s_plugin_MantisScheduledTickets_ = '';
@@ -53,6 +53,7 @@ $s_plugin_MantisScheduledTickets_config_update_info_unknown = 'MantisScheduledTi
 $s_plugin_MantisScheduledTickets_config_save = 'Save configuration';
 $s_plugin_MantisScheduledTickets_config_ok = 'OK';
 $s_plugin_MantisScheduledTickets_config_not_ok = 'NOT OK';
+$s_plugin_MantisScheduledTickets_tested = 'Tested?';
 
 # frequency-related strings
 $s_plugin_MantisScheduledTickets_manage_frequency_link = 'Manage Frequencies';

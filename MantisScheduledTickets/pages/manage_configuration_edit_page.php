@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
@@ -154,26 +154,21 @@
                                     if( $t_check_for_updates )
                                     {
                                         $t_installed_version = $g_plugin_cache[plugin_get_current()]->version;
-                                        $t_latest_version = mst_core_get_latest_plugin_version();
-                                        $t_is_latest = mst_core_is_latest_plugin_version( $t_installed_version, $t_latest_version );
+                                        list( $t_latest_version, $t_tested ) = mst_core_get_plugin_version_info( $t_installed_version );
+                                        $t_is_latest = $t_installed_version == $t_latest_version;
 
-                                        $t_installed_version_class = ( 'N/A' == $t_latest_version ) ? 'config_warn' : ( $t_is_latest ? 'config_ok' : 'config_not_ok' );
+                                        $t_installed_version_class = ( $t_latest_version == $t_installed_version ) ? 'config_ok' : 'config_warn';
+                                        $t_latest_version_class = ( null == $t_latest_version ) ? 'config_not_ok' : 'config_ok';
+                                        $t_latest_version = ( null == $t_latest_version ) ?                                             plugin_lang_get( 'config_unable_to_check_for_updates' ) : $t_latest_version;
 
-                                        switch ( $t_latest_version )
+                                        if ( null === $t_tested )
                                         {
-                                            case '':
-                                                $t_latest_version_class = 'config_not_ok';
-                                                break;
-                                            case 'N/A':
-                                                $t_latest_version_class = 'config_warn';
-                                                break;
-                                            default:
-                                                $t_latest_version_class = 'config_ok';
-                                                break;
+                                            $t_tested_class = 'config_not_ok';
                                         }
-                                        $t_latest_version = ( '' == $t_latest_version ) ?
-                                            plugin_lang_get( 'config_unable_to_check_for_updates' ) :
-                                            ( 'N/A' == $t_latest_version ) ? plugin_lang_get( 'config_update_info_unknown' ) : $t_latest_version;
+                                        else
+                                        {
+                                            $t_tested_class = $t_tested ? 'config_ok' : 'config_warn';
+                                        }
                                     ?>
                                         <tr>
                                             <td class="category" id="installed_version">
@@ -192,6 +187,21 @@
                                             <td>
                                                 <i class="fa fa-square-o fa-xlg <?php echo $t_latest_version_class; ?>"></i>
                                                 <?php echo $t_latest_version; ?>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="category" id="tested">
+                                                <?php echo plugin_lang_get( 'tested' ); ?>
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-square-o fa-xlg <?php echo $t_tested_class; ?>"></i>
+                                                <?php
+                                                    if ( null !== $t_tested )
+                                                    {
+                                                        echo $t_tested ? plugin_lang_get( 'config_ok' ) : plugin_lang_get( 'config_update_info_unknown' );
+                                                    }
+                                                ?>
                                             </td>
                                         </tr>
                                     <?php

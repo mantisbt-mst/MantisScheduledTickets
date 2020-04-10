@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
 /**
@@ -42,13 +42,13 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
     layout_page_header();
     layout_page_begin();
 
-	echo '<div class="col-md-12 col-xs-12">';
-	echo '<div class="space-10"></div>';
-	echo '<div class="alert alert-warning center">';
-	echo '<p class="bigger-110">';
-	echo "\n" . $p_message . "\n";
-	echo '</p>';
-	echo '<div class="space-10"></div>';
+  echo '<div class="col-md-12 col-xs-12">';
+  echo '<div class="space-10"></div>';
+  echo '<div class="alert alert-warning center">';
+  echo '<p class="bigger-110">';
+  echo "\n" . $p_message . "\n";
+  echo '</p>';
+  echo '<div class="space-10"></div>';
 
     echo '<form method="post" action="' . string_attribute( form_action_self() ) . '">';
     # CSRF protection not required here - user needs to confirm action
@@ -56,7 +56,7 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
     print_hidden_inputs( $_POST );
     print_hidden_inputs( $_GET );
 
-	echo '<input type="hidden" name="_confirmed" value="1" />' , "\n";
+  echo '<input type="hidden" name="_confirmed" value="1" />' , "\n";
 
     if( is_array( $p_button_labels ) ) {
         foreach( $p_button_labels as $t_button_label ) {
@@ -64,9 +64,9 @@ function mst_helper_ensure_confirmed( $p_message, $p_button_labels ) {
         }
     }
 
-	echo "\n</form>\n";
-	echo '<div class="space-10"></div>';
-	echo '</div></div>';
+  echo "\n</form>\n";
+  echo '<div class="space-10"></div>';
+  echo '</div></div>';
 
     layout_page_end();
     exit;

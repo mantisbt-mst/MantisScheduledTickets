@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
 /**
@@ -36,7 +36,7 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
     function register() {
         $this->name = 'Mantis Scheduled Tickets';
         $this->description = 'Create tickets automatically, based on definable frequencies';
-        $this->version = '0.4.0';
+        $this->version = '0.4.1';
         $this->page = 'manage_configuration_edit_page';
 
         $this->requires = array(
@@ -44,8 +44,8 @@ class MantisScheduledTicketsPlugin extends MantisPlugin {
             );
 
         $this->author = 'MantisScheduledTickets Team';
-        $this->contact = 'support@mantis-scheduled-tickets.net';
-        $this->url = 'http://www.mantis-scheduled-tickets.net';
+        $this->contact = 'mantisbt.mst@gmail.com';
+        $this->url = 'https://github.com/mantisbt-mst/MantisScheduledTickets';
     }
 
     /**

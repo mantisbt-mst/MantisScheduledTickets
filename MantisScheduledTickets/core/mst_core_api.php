@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
 define( 'MST_CONFIGURATION_PAGE', 1 );
@@ -144,31 +144,25 @@ function mst_core_tables_exist() {
 
 /**
  * Check the latest version
- */
-function mst_core_get_latest_plugin_version() {
-    $t_latest_versions = trim( @file_get_contents( 'http://mantis-scheduled-tickets.net/latest_version_info.php' ) );
-    $t_latest_versions = explode( ',', $t_latest_versions );
-    $t_installed_version = join( '.', array_splice( explode( '.', MANTIS_VERSION ), 0, 2 ) ) . '.x';
-
-    foreach( $t_latest_versions as $t_version ) {
-        $t_mantis_version = substr( $t_version, strpos( $t_version, '-' ) + 1 );
-
-        if( $t_mantis_version == $t_installed_version ) {
-            return $t_version;
-        }
-    }
-
-    return 'N/A';
-}
-
-/**
- * Determine whether this is the latest version of MantisScheduledTickets for the installed version of Mantis
  *
  * @param string $p_installed_version Installed version of MantisScheduledTickets
- * @param string $p_latest_versions Latest versions of the plugin
  */
-function mst_core_is_latest_plugin_version( $p_installed_version, $p_latest_versions ) {
-    $t_installed_version = $p_installed_version . '-' . join( '.', array_splice( explode( '.', MANTIS_VERSION ), 0, 2 ) ) . '.x';
+function mst_core_get_plugin_version_info( $p_installed_version ) {
+    $t_version_info = trim( @file_get_contents( 'https://raw.githubusercontent.com/mantisbt-mst/MantisScheduledTickets/master/Resources/latest_version_info.txt' ) );
+    $t_versions = json_decode( $t_version_info );
 
-    return $t_installed_version == $p_latest_versions;
+    if ( '1' == substr( MANTIS_VERSION, 0, 1 ) ) {
+        $t_mantis_version = substr( MANTIS_VERSION, 0, 4 ) . 'x';
+    } else {
+        $t_mantis_version = '2.x.x';
+    }
+
+    if ( null == $t_versions ) {
+        return array( null, null );
+    }
+
+    $t_latest_version = $t_versions->{'mantis-' . $t_mantis_version}->{'latest_MST_version'};
+    $t_tested = in_array( MANTIS_VERSION, $t_versions->{'mantis-' . $t_mantis_version}->{'tested_MBT_versions'} );
+
+    return array( $t_latest_version, $t_tested );
 }
