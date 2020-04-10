@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
@@ -41,15 +41,15 @@
 <br/>
 
 <table class="width100" cellspacing="1">
-	<tr>
-		<td class="form-title" colspan="7">
+  <tr>
+    <td class="form-title" colspan="7">
             <?php echo plugin_lang_get( 'title_frequencies' ); ?>
             &nbsp;
             <?php print_button( plugin_page( 'manage_frequency_add_page' ), plugin_lang_get( 'create_new_frequency_link' ) ); ?>
             &nbsp;
             <?php print_button( plugin_page( 'manage_frequency_regenerate_crontab' ), plugin_lang_get( 'regenerate_crontab_link' ) ); ?>
         </td>
-	</tr>
+  </tr>
 
     <tr>
         <td class="category">
@@ -121,10 +121,10 @@
                 <td id="template_count_<?php echo $t_id; ?>" class="<?php echo $t_template_count_class; ?>"><?php echo $t_frequency['template_count']; ?></td>
                 <td id="bug_count_<?php echo $t_id; ?>" class="<?php echo $t_bug_count_class; ?>"><?php echo $t_frequency['bug_count']; ?></td>
             </tr>
-	<?php
+  <?php
         }
-	}
-	?>
+  }
+  ?>
 </table>
 <br />
 

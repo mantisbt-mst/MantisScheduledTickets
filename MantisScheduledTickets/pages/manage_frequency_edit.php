@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
@@ -131,10 +131,10 @@
 <br />
 <div align="center">
 <?php
-	echo lang_get( 'operation_successful' ) . '<br />';
-	print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
+    echo lang_get( 'operation_successful' ) . '<br />';
+    print_bracket_link( $t_redirect_url, lang_get( 'proceed' ) );
 ?>
 </div>
 
 <?php
-	html_page_bottom();
+    html_page_bottom();

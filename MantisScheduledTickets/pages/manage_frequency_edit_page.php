@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
@@ -252,19 +252,19 @@
     ?>
 </table>
 <?php
-	collapse_closed( 'history' );
+    collapse_closed( 'history' );
 ?>
 <table class="width100" cellspacing="0">
 <tr>
-	<td class="form-title" colspan="4">
+    <td class="form-title" colspan="4">
         <?php
             collapse_icon( 'history' );
             echo plugin_lang_get( 'frequency_history' );
         ?>
-	</td>
+    </td>
 </tr>
 </table>
 
 <?php
-	collapse_end( 'history' );
+    collapse_end( 'history' );
     html_page_bottom();

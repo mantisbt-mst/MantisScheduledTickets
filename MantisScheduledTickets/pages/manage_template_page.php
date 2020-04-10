@@ -20,8 +20,8 @@
  *
  * @package MantisScheduledTickets
  * @filesource
- * @copyright Copyright (C) 2015-2017 MantisScheduledTickets Team <support@mantis-scheduled-tickets.net>
- * @link http://www.mantis-scheduled-tickets.net
+ * @copyright Copyright (C) 2015-2020 MantisScheduledTickets Team <mantisbt.mst@gmail.com>
+ * @link https://github.com/mantisbt-mst/MantisScheduledTickets
  */
 
     access_ensure_global_level( plugin_config_get( 'manage_threshold' ) );
@@ -46,13 +46,13 @@
 <br/>
 
 <table class="width100" cellspacing="1">
-	<tr>
-		<td class="form-title" colspan="2">
+    <tr>
+        <td class="form-title" colspan="2">
             <?php echo plugin_lang_get( 'title_templates' ); ?>
             &nbsp;
             <?php print_button( plugin_page( 'manage_template_add_page' ), plugin_lang_get( 'create_new_template_link' ) ); ?>
         </td>
-	</tr>
+    </tr>
 
     <tr>
         <td class="category">
